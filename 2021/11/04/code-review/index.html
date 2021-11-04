@@ -4,15 +4,21 @@
   <meta charset="utf-8">
   
   
-  <title>Hexo</title>
+  <title>code-review | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://superwang.online/index.html">
+  <meta name="description" content="code review对旧代码进行review 业务说明 (无业务不开发)   设计思路 (一切实现的基础)   代码层次结构 (逻辑清晰的前提)   代码逻辑说明 (想法的具体实现)   代码好的地方 (开发规范执行完好的地方)   代码坏的地方 (开发规范执行不好的地方)   代码实现经典之处 (牛逼大佬值得学习的地方)   代码实现缺陷遗漏之处 (需要牛逼大佬完善的地方)    对新代码如何">
+<meta property="og:type" content="article">
+<meta property="og:title" content="code-review">
+<meta property="og:url" content="http://superwang.online/2021/11/04/code-review/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="code review对旧代码进行review 业务说明 (无业务不开发)   设计思路 (一切实现的基础)   代码层次结构 (逻辑清晰的前提)   代码逻辑说明 (想法的具体实现)   代码好的地方 (开发规范执行完好的地方)   代码坏的地方 (开发规范执行不好的地方)   代码实现经典之处 (牛逼大佬值得学习的地方)   代码实现缺陷遗漏之处 (需要牛逼大佬完善的地方)    对新代码如何">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://superwang.online/.online//img1.png">
+<meta property="article:published_time" content="2021-11-04T03:51:53.000Z">
+<meta property="article:modified_time" content="2021-11-04T03:52:59.233Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://superwang.online/.online//img1.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -69,9 +75,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-code-review" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-code-review" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/11/04/code-review/" class="article-date">
   <time class="dt-published" datetime="2021-11-04T03:51:53.000Z" itemprop="datePublished">2021-11-04</time>
@@ -84,8 +88,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/11/04/code-review/">code-review</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      code-review
     </h1>
   
 
@@ -218,58 +222,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hexo-blog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/11/04/hexo-blog/" class="article-date">
-  <time class="dt-published" datetime="2021-11-04T03:40:17.000Z" itemprop="datePublished">2021-11-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/11/04/hexo-blog/">hexo_blog</a>
-    </h1>
+    <a href="/2021/11/04/hexo-blog/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hexo_blog</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="使用-hexo-搭建博客"><a href="#使用-hexo-搭建博客" class="headerlink" title="使用 hexo 搭建博客"></a>使用 hexo 搭建博客</h1><ul>
-<li>使用命令</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo init   # 空目录初始化</span><br><span class="line">hexo g      # 生成</span><br><span class="line">hexo s      # 本地跑服务</span><br><span class="line">hexo d      # deploy 部署， 上传到 git</span><br></pre></td></tr></table></figure>
-
-
-<p>插件安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 安装 图片 插件</span></span></span><br><span class="line">npm install hexo-asset-image --save </span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 同时修改配置：   post_asset_folder: true</span></span> </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># git部署插件安装， 不然会报git的错误</span></span></span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://superwang.online/2021/11/04/hexo-blog/" data-id="ckvkesk1l0000s9ok9g3w77s0" data-title="hexo_blog" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
 
 
 </section>
