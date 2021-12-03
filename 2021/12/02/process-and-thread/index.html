@@ -4,15 +4,25 @@
   <meta charset="utf-8">
   
   
-  <title>大炮的博客</title>
+  <title>进程与线程 | 大炮的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="大炮的博客">
-<meta property="og:url" content="http://wczj.github.io/index.html">
+  <meta name="description" content="进程基本概念； 进程状态及状态转换； 进程控制块的作用和内容； 进程控制操作； 进程地址空间与进程映像； 为什么引入线程？线程的应用场景； Web服务器的实现； 线程概念、线程与进程的区别； 线程实现的三种方式； Pthreads线程库及应用； 几个重要的概念：原语、可再入程序。  进程的基本概念12345多道程序设计 : 允许多个程序同时进入内存并运行， 提高系统效率并发环境和并发程序 :">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程与线程">
+<meta property="og:url" content="http://wczj.github.io/2021/12/02/process-and-thread/index.html">
 <meta property="og:site_name" content="大炮的博客">
+<meta property="og:description" content="进程基本概念； 进程状态及状态转换； 进程控制块的作用和内容； 进程控制操作； 进程地址空间与进程映像； 为什么引入线程？线程的应用场景； Web服务器的实现； 线程概念、线程与进程的区别； 线程实现的三种方式； Pthreads线程库及应用； 几个重要的概念：原语、可再入程序。  进程的基本概念12345多道程序设计 : 允许多个程序同时进入内存并运行， 提高系统效率并发环境和并发程序 :">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2021-12-02T13:28:54.000Z">
+<meta property="article:modified_time" content="2021-12-02T14:53:18.998Z">
 <meta property="article:author" content="王大炮">
+<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
   
     <link rel="alternate" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
   
@@ -69,9 +79,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-process-and-thread" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-process-and-thread" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/12/02/process-and-thread/" class="article-date">
   <time class="dt-published" datetime="2021-12-02T13:28:54.000Z" itemprop="datePublished">2021-12-02</time>
@@ -88,8 +96,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/12/02/process-and-thread/">进程与线程</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      进程与线程
     </h1>
   
 
@@ -170,251 +178,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-linux-software" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/11/15/linux-software/" class="article-date">
-  <time class="dt-published" datetime="2021-11-15T01:40:01.000Z" itemprop="datePublished">2021-11-15</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/11/15/linux-software/">linux-software</a>
-    </h1>
+    <a href="/2021/11/15/linux-software/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">linux-software</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="linux-环境下各种软件的安装"><a href="#linux-环境下各种软件的安装" class="headerlink" title="linux 环境下各种软件的安装"></a>linux 环境下各种软件的安装</h2><h3 id="centos-安装-v2ray-服务端-（-个人VPN搭建）"><a href="#centos-安装-v2ray-服务端-（-个人VPN搭建）" class="headerlink" title="centos 安装 v2ray 服务端 （ 个人VPN搭建）"></a>centos 安装 v2ray 服务端 （ 个人VPN搭建）</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum update -y &amp;&amp; yum install curl -y   </span><br><span class="line">bash &lt;(curl -s -L https://git.io/v2ray.sh)    ## 安装脚本</span><br><span class="line">v2ray url                                     ## 生成 vmess链接， 导入客户端 </span><br><span class="line">systemctl stop firewalld                      ## 关闭防火墙</span><br></pre></td></tr></table></figure>
-
-<h3 id="安装zsh-和-oh-my-zsh"><a href="#安装zsh-和-oh-my-zsh" class="headerlink" title="安装zsh 和 oh-my-zsh"></a>安装zsh 和 oh-my-zsh</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">yum install zsh </span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 从gitee上获取安装脚本</span></span></span><br><span class="line">wget https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 编辑 install.sh, 修改以下两行</span></span></span><br><span class="line">REPO=$&#123;REPO:-mirrors/oh-my-zsh&#125; </span><br><span class="line">REMOTE=$&#123;REMOTE:-https://gitee.com/$&#123;REPO&#125;.git&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wczj.github.io/2021/11/15/linux-software/" data-id="ckwp129au0002zmok8snl5s5f" data-title="linux-software" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
-    <article id="post-code-review" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/11/04/code-review/" class="article-date">
-  <time class="dt-published" datetime="2021-11-04T03:51:53.000Z" itemprop="datePublished">2021-11-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/11/04/code-review/">code-review</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="对旧代码进行review"><a href="#对旧代码进行review" class="headerlink" title="对旧代码进行review"></a>对旧代码进行review</h2><ul>
-<li>业务说明<ul>
-<li>(无业务不开发)</li>
-</ul>
-</li>
-<li>设计思路<ul>
-<li>(一切实现的基础)</li>
-</ul>
-</li>
-<li>代码层次结构<ul>
-<li>(逻辑清晰的前提)</li>
-</ul>
-</li>
-<li>代码逻辑说明<ul>
-<li>(想法的具体实现)</li>
-</ul>
-</li>
-<li>代码好的地方<ul>
-<li>(开发规范执行完好的地方)</li>
-</ul>
-</li>
-<li>代码坏的地方<ul>
-<li>(开发规范执行不好的地方)</li>
-</ul>
-</li>
-<li>代码实现经典之处<ul>
-<li>(牛逼大佬值得学习的地方)</li>
-</ul>
-</li>
-<li>代码实现缺陷遗漏之处<ul>
-<li>(需要牛逼大佬完善的地方)</li>
-</ul>
-</li>
-</ul>
-<h2 id="对新代码如何进行review"><a href="#对新代码如何进行review" class="headerlink" title="对新代码如何进行review"></a>对新代码如何进行review</h2><p>参考文章 <a target="_blank" rel="noopener" href="https://ken.io/note/how-to-do-code-review-in-a-team">&lt;&lt;如何在团队中做好Code Review&gt;&gt;</a> , 基本全拷贝，去看这篇文章就可以了</p>
-<h2 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h2><ul>
-<li>互相学习，彼此成就</li>
-</ul>
-<blockquote>
-<p>你有一个苹果，我有一个苹果，彼此交换一下，我们仍然是各有一个苹果；但你有一种思想，我有一种思想，彼此交换，我们就都有了两种思想，甚至更多。</p>
-</blockquote>
-<ul>
-<li>知识共享，自动互备</li>
-</ul>
-<p>在大部分团队，尤其是微服务架构的团队。 通常是一个人员负责多个服务/项目， 如果没有code review， 项目中设计的架构知识，业务知识就只存在于项目过程中产出的说明文档了。</p>
-<blockquote>
-<p>（像我们甚至文档都比较少的）很多设计内容基本只存在于开发人员脑子里。 时间久了，自己都会忘，别人要维护就更难了。</p>
-</blockquote>
-<p>code review 的过程， 至少 Reviewer 必须阅读文档，看代码是否实现相同。 知识的传播性更好，基本不会只有一个人了解某个项目的情况了。</p>
-<ul>
-<li>统一风格， 提升质量</li>
-</ul>
-<p>代码质量等级： 可以编译通过-&gt;可以正常运行-&gt;可以测试通过-&gt;容易阅读-&gt;容易维护 。 Code Review的代码最起码可以达到易阅读这个级别</p>
-<p>要做到易阅读，不是只要有Code Review这个环节就可以了，还要有相关的规范，让大家按照同样的工程风格、编码风格去构建项目和编写代码。</p>
-<p>统一风格一方面是让大家无论是维护项目还是阅读代码，不用互相适应各自的编码习惯，另外也是给Reviewer一个Code Review的基本依据。</p>
-<blockquote>
-<p>发现Bug不是Code Review的必需品，而是附属品。至于那些低级的问题/bug交给代码扫描工具就可以了，这不是Code Review的职责。</p>
-</blockquote>
-<h2 id="推动code-review落地执行"><a href="#推动code-review落地执行" class="headerlink" title="推动code review落地执行"></a>推动code review落地执行</h2><h3 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h3><blockquote>
-<p>gitlab, 每个项目不同角色， 在合并过程进行 code review</p>
-</blockquote>
-<h3 id="开发规范"><a href="#开发规范" class="headerlink" title="开发规范"></a>开发规范</h3><ul>
-<li>工程规范 （工程结构，分层方式，命名等）</li>
-<li>命令规范 （接口，类，方法名，变量名）</li>
-<li>代码格式 （括号，空格，换行，缩进）</li>
-<li>注释规范 （规定必要的注释）</li>
-<li>日志规范 （合理的记录必要的日志）</li>
-<li>各种推荐和不推荐的代码示例</li>
-</ul>
-<p>规范学习网址：</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="http://www.gonglin91.com/2018/03/30/go-code-review-comments/">Go Code Review Comments(Go官方编程规范翻译)</a></li>
-<li><a target="_blank" rel="noopener" href="https://learnku.com/go/wikis/38426">Uber 开源的《Go 语言编码规范</a></li>
-<li><a target="_blank" rel="noopener" href="https://learnku.com/go/wikis/38430">Go 最佳实践: 编写可维护 Go 代码</a></li>
-</ol>
-<h3 id="指定流程规范"><a href="#指定流程规范" class="headerlink" title="指定流程规范"></a>指定流程规范</h3><ul>
-<li>确定code review 的实施环节</li>
-</ul>
-<p>CodeReview建议是放在代码提交测试前，也就是开发人员完成代码开发及自测后将代码提交到测试分支时进行Code Review。毕竟，如果测试通过后再进行Code<br>Review，如果需要代码变更，势必会增加测试的工作量，甚至影响项目进度。亦或是顶着项目上线的压力，干脆“以后再说”了</p>
-<p>以一般的git 工作流程来说， 就是 功能分支 feature 合并到 开发者分支 develop的时候进行 code review</p>
-<ul>
-<li><p>指定角色行为规范</p>
-<p><img src="/2021/11/04/code-review/img1.png" alt="行为规范"></p>
-<p>规范的目的：</p>
-<ol>
-<li>控制提交Code Review的代码的粒度</li>
-<li>控制单次Code Review的时间</li>
-<li>提升Commit/MergeRequest描述的质量，减少沟通成本</li>
-</ol>
-</li>
-</ul>
-<p>通过细粒度高频次的方式尽可能利用工程师碎片化的时间进行Code Review，一定程度上保证Code Review的效率。</p>
-<h3 id="分享与统计"><a href="#分享与统计" class="headerlink" title="分享与统计"></a>分享与统计</h3><p>对code review 的过程及结果进行检验</p>
-<ul>
-<li>定期分享</li>
-</ul>
-<p>我们期望CodeReview可以让工程师之间互相学习的，那么对于一次Code Review通常只有参与的2-3个工程师有互相学习的机会，那么在这个过程中学到的知识，定期的分享出来，既可以加强知识的流动，又可以检查大家究竟有没有在Code<br>Review过程中学习到知识，或者有没有认真的进行Code Review</p>
-<p>至于分享的内容，可以是开发规范中的范例代码，也可以是规范中的正例代码，也可以是针对某个功能实现的最佳算法/最佳实践，也可以是Code Review过程中的争议代码，也可以是自己踩过的坑。</p>
-<ul>
-<li>数据统计</li>
-</ul>
-<p>为了在一定程度上保证Code Review的效率，我们在规范里是要求参与的工程师：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.Developer控制提交Code Review的粒度，或者控制每个Commit的粒度</span><br><span class="line">2.Developer要准确清晰的描述所提交的代码 </span><br><span class="line">3.Reviewer&amp;Approver要在规定时间内完成Code Review</span><br></pre></td></tr></table></figure>
-
-<p>这些情况纯粹靠人工是无法检验的，还是需要有一定的数据统计。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">如果用Gerrit，可以查询Gerrit的数据库，里面会有Code Review的信息，</span><br><span class="line">如果用GitLab，可以通过WebHook或者restful API获取Code Review信息</span><br></pre></td></tr></table></figure>
-
-<p>我们可以做成报表，来展示Code Review的情况：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.每人每周Code Review所消耗的时间</span><br><span class="line">2.每人每周被Code Review所消耗的平均时间</span><br><span class="line">3.超过规定时间的Code Review情况</span><br><span class="line">4.代码提交描述字数过少的情况</span><br><span class="line">5.等等（根据自己的需要来）</span><br></pre></td></tr></table></figure>
-
-<h2 id="保证code-review质量的关键"><a href="#保证code-review质量的关键" class="headerlink" title="保证code review质量的关键"></a>保证code review质量的关键</h2><ul>
-<li>工程师 对研发规范的认真学习</li>
-<li>资深工程师的认真对待</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wczj.github.io/2021/11/04/code-review/" data-id="ckwp129al0000zmokd17w4kfl" data-title="code-review" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-hexo-blog" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2021/11/04/hexo-blog/" class="article-date">
-  <time class="dt-published" datetime="2021-11-04T03:40:17.000Z" itemprop="datePublished">2021-11-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2021/11/04/hexo-blog/">hexo_blog</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="使用-hexo-搭建博客"><a href="#使用-hexo-搭建博客" class="headerlink" title="使用 hexo 搭建博客"></a>使用 hexo 搭建博客</h1><ul>
-<li>使用命令</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo init   # 空目录初始化</span><br><span class="line">hexo g      # 生成</span><br><span class="line">hexo s      # 本地跑服务</span><br><span class="line">hexo d      # deploy 部署， 上传到 git</span><br></pre></td></tr></table></figure>
-
-
-<p>插件安装</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 安装 图片 插件</span></span></span><br><span class="line">npm install https://github.com/CodeFalling/hexo-asset-image --save</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># 同时修改配置：   post_asset_folder: true</span></span> </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment"># git部署插件安装， 不然会报git的错误</span></span></span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git page 域名保持不懂</span><br><span class="line"></span><br><span class="line">在 source 下创建 CNAME 文件， 放入 域名</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://wczj.github.io/2021/11/04/hexo-blog/" data-id="ckwp129as0001zmok1id67oyf" data-title="hexo_blog" class="article-share-link">Share</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
 </section>
