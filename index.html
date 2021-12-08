@@ -71,6 +71,102 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-os-处理器调度" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/08/os-%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" class="article-date">
+  <time class="dt-published" datetime="2021-12-08T13:53:07.000Z" itemprop="datePublished">2021-12-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/12/08/os-%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/">操作系统-处理器调度</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="CPU调度-概念"><a href="#CPU调度-概念" class="headerlink" title="CPU调度 概念"></a>CPU调度 概念</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">控制，协调 多个进程对CPU的竞争：</span><br><span class="line">    即 按一定的调度算法从 就绪队列中 选择一个进程，把CPU使用权交给该进程</span><br><span class="line">    如果没有就绪进程，系统会安排一个 系统空闲进程或idle进程</span><br><span class="line"></span><br><span class="line">系统场景： 多个就绪进程，多个CPU</span><br><span class="line">    决策 给哪个进程分配哪个CPU    </span><br></pre></td></tr></table></figure>
+
+<p>调度要解决的问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WHAT:   按什么原则选择下一个执行的进程 -- 调度算法</span><br><span class="line">WHEN： 何时进行选择 -- 调度时机    </span><br><span class="line">HOW:  如何让被选中的进程上CPU运行 -- 调度过程 （进程的上下文切换）</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>调度时机</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1.进程 正常终止 或  异常终止</span><br><span class="line">2.新进程创建 或 等待进程变为就绪进程</span><br><span class="line">3.一个进程从运行态进入阻塞态 </span><br><span class="line">4.一个进程从运行态变为就绪态  (时钟中断： 时间片到了）</span><br><span class="line"></span><br><span class="line">即： 内核对 中断/异常/系统调用 处理后返回用户态时， 重新调度 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>调度过程</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">是一个进程让出处理器，由另外一个进程占用处理器的过程</span><br><span class="line"></span><br><span class="line">包括工作： </span><br><span class="line">    切换全局页目录以加载一个新的地址空间</span><br><span class="line">    切换内核栈和硬件上下文</span><br><span class="line"></span><br><span class="line">切换过程包括了： 对原来运行进程各种状态的保存， 对新的进程各种状态的恢复</span><br><span class="line"></span><br><span class="line">上下文切换开销： </span><br><span class="line">    直接开销： 内核完成切换花费的CPU时间</span><br><span class="line">        保存和恢复寄存器</span><br><span class="line">        切换地址空间（相关指令比较昂贵）</span><br><span class="line">    间接开销：   </span><br><span class="line">        高速缓存（Cache）， 缓冲区缓存（buffer cache）， TLB（translation lookup buffer） 失效        </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>CPU调度算法</li>
+</ul>
+<p>不同角度有不同的要求</p>
+<p><img src="/2021/12/08/os-%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95%E8%A6%81%E6%B1%82.png" alt="调度算法不同角度的要求"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">调度算法衡量指标： </span><br><span class="line">    吞吐量： 单位时间完成的进程数量</span><br><span class="line">    周转时间： 每个进程从提出请求到完成运行完成的时间</span><br><span class="line">    响应时间： 从进程提出请求到第一次回应的时间</span><br><span class="line">    其他： </span><br><span class="line">        CPU利用率： CPU有效工作的时间比率</span><br><span class="line">        等待时间： 每个进程在 就绪队列中 等待的时间</span><br></pre></td></tr></table></figure>
+
+<h2 id="调度算法-考虑的问题"><a href="#调度算法-考虑的问题" class="headerlink" title="调度算法 考虑的问题"></a>调度算法 考虑的问题</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">进程控制块PCB： </span><br><span class="line">    需要记录哪些 与CPU调度相关的 信息</span><br><span class="line">进程优先级 及 就绪队列的组织</span><br><span class="line">抢占式调度 与 非抢占式调度</span><br><span class="line">I/O密集型 与 CPU密集型 进程</span><br><span class="line">时间片    </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>进程优先级</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">优先级，优先数： </span><br><span class="line">    优先数的大小 在不同操作系统中 表示的优先级高低不同 （可能数字小的高，也可能数字大的高）</span><br><span class="line"></span><br><span class="line">静态优先级： </span><br><span class="line">    进程创建时指定，运行过程中不会改变</span><br><span class="line">动态优先级： </span><br><span class="line">    运行过程中动态变化，如等待时间长的提升优先级        </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>进程就绪队列组织</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">按优先级排队：</span><br><span class="line">    根据优先级进入不同的就绪队列</span><br><span class="line">其他：     </span><br><span class="line">    创建时进入最高级队列，时间片轮转，动态降低优先级</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>抢占式 和 非抢占式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">占用CPU的方式： </span><br><span class="line">    抢占式： 有比正在运行的进程 优先级更高的进程进入就绪队列时， 系统可强行剥夺CPU，提供给更高级进程</span><br><span class="line">    不可抢占： 某一个进程被调度运行后，除非自身原因放弃CPU，不然能一直运行</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>I/O密集型 与 CPU密集型 进程</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">进程执行过程的行为划分：    </span><br><span class="line">    I/O密集型： 频繁进行I/O，通常会花费很多时间等待 I/O 的完成  </span><br><span class="line">        (占用CPU很短的时间就会让出CPU进入I/O等待，所以一般调度系统都会对I/O型进行偏好）</span><br><span class="line">        </span><br><span class="line">    CPU密集型（计算密集型）： 需要大量的CPU时间进行计算 </span><br><span class="line">       （占用CPU时间长）</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间片</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">一个时间段： 分配给调度到CPU上的进程，允许进程占用CPU运行的时间长度</span><br><span class="line"></span><br><span class="line">如何选择时间片： </span><br><span class="line">    进程切换的开销</span><br><span class="line">    对响应时间的要求</span><br><span class="line">    就绪进程个数</span><br><span class="line">    CPU能力</span><br><span class="line">    进程的行为    </span><br></pre></td></tr></table></figure>
+
+<h2 id="批处理系统-中采用的-调度算法"><a href="#批处理系统-中采用的-调度算法" class="headerlink" title="批处理系统 中采用的 调度算法"></a>批处理系统 中采用的 调度算法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">先来先服务 （ FCFS  -- first come first serve ）</span><br><span class="line">    先进先出， 非抢占式  （ 问题： 短的在长的后面 ，周转时间长）</span><br><span class="line">最短作业优先（ SJF  -- shortest job first ）</span><br><span class="line">    具有最短完成时间的进程优先执行， 非抢占式    （ 优化周转时间， 问题：长作业一直得不到执行，饥饿现象）</span><br><span class="line">最短剩余时间优先 （ SRTN  --  shortest remaining time next ）</span><br><span class="line">    变为抢占式，一个就绪进程比正在运行进程具有更短的完成时间，进行抢占 （ 优化周转时间 ）</span><br><span class="line">最高响应比优先 （ HRRN  --  highest response ratio next ） </span><br><span class="line">    综合算法， 先计算进程响应比R， 选择R最高的进程进行执行</span><br><span class="line">    R = 周转时间 / 处理时间  </span><br><span class="line">      = （等待时间 + 处理时间）/ 处理时间 </span><br><span class="line">      = 1 + （等待时间 / 处理时间）</span><br><span class="line">    所以相同等待时间，处理时间越多，响应比越小。 即优先级低</span><br><span class="line">    然后等待时间变大，响应比就会变大。 即优先级慢慢变高</span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wczj.github.io/2021/12/08/os-%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" data-id="ckwxptwv900000pokg3xdhkse" data-title="操作系统-处理器调度" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" rel="tag">处理器调度</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-os-进程与线程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="article-date">
@@ -711,7 +807,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%80%E4%BB%8B/" rel="tag">简介</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" rel="tag">处理器调度</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%80%E4%BB%8B/" rel="tag">简介</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
     </div>
   </div>
 
@@ -721,7 +817,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+      <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
     </div>
   </div>
 
@@ -743,6 +839,10 @@
       <ul>
         
           <li>
+            <a href="/2021/12/08/os-%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/">操作系统-处理器调度</a>
+          </li>
+        
+          <li>
             <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/">操作系统-进程与线程</a>
           </li>
         
@@ -756,10 +856,6 @@
         
           <li>
             <a href="/2021/11/15/linux-software/">linux-software</a>
-          </li>
-        
-          <li>
-            <a href="/2021/11/04/code-review/">code-review</a>
           </li>
         
       </ul>
