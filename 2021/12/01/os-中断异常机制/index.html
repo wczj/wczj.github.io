@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>操作系统-中断异常机制 | 大炮的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="操作系统运行环境与运行机制12345操作系统运行环境    CPU状态    中断&#x2F;异常机制运行机制    系统调用      12345678中央处理器（CPU）： 运算器，控制器，一系列寄存器 以及 高速缓存 构成    两类寄存器：         用户可见寄存器： 高级语言编译器分配使用，减少程序访问内存次数        控制和状态寄存器： 控制处理器的操作，操作系统代码使用常见控制状态">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统-中断异常机制">
+<meta property="og:url" content="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="大炮的博客">
+<meta property="og:description" content="操作系统运行环境与运行机制12345操作系统运行环境    CPU状态    中断&#x2F;异常机制运行机制    系统调用      12345678中央处理器（CPU）： 运算器，控制器，一系列寄存器 以及 高速缓存 构成    两类寄存器：         用户可见寄存器： 高级语言编译器分配使用，减少程序访问内存次数        控制和状态寄存器： 控制处理器的操作，操作系统代码使用常见控制状态">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/%E4%B8%AD%E6%96%AD%E5%8F%91%E7%94%9F%E5%90%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4.png">
+<meta property="article:published_time" content="2021-12-01T03:28:54.000Z">
+<meta property="article:modified_time" content="2021-12-08T01:45:51.401Z">
+<meta property="article:author" content="王大炮">
+<meta property="article:tag" content="操作系统">
+<meta property="article:tag" content="中断异常">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png">
+  
+    <link rel="alternate" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">大炮的博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://wczj.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-os-中断异常机制" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" class="article-date">
+  <time class="dt-published" datetime="2021-12-01T03:28:54.000Z" itemprop="datePublished">2021-12-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      操作系统-中断异常机制
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="操作系统运行环境与运行机制"><a href="#操作系统运行环境与运行机制" class="headerlink" title="操作系统运行环境与运行机制"></a>操作系统运行环境与运行机制</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">操作系统运行环境</span><br><span class="line">    CPU状态</span><br><span class="line">    中断/异常机制</span><br><span class="line">运行机制</span><br><span class="line">    系统调用    </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">中央处理器（CPU）： 运算器，控制器，一系列寄存器 以及 高速缓存 构成</span><br><span class="line">    两类寄存器： </span><br><span class="line">        用户可见寄存器： 高级语言编译器分配使用，减少程序访问内存次数</span><br><span class="line">        控制和状态寄存器： 控制处理器的操作，操作系统代码使用</span><br><span class="line">常见控制状态寄存器： </span><br><span class="line">    程序计数器（PC program counter）：记录将要取出指令的地址  </span><br><span class="line">    指令寄存器（IR instruction register）： 记录最近取出的指令</span><br><span class="line">    程序状态字（PSW program status word） ： 记录处理器的运行状态，如条件码，模式，控制位等信息 </span><br></pre></td></tr></table></figure>
+
+<p>操作系统需求 – 保护</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">从特征考虑： 并发，共享</span><br><span class="line">    提出要求： 保护和控制</span><br><span class="line"></span><br><span class="line">硬件提供基本运行机制： </span><br><span class="line">    处理器具有特权级别，能在不同的特权级别下运行不同的指令集合</span><br><span class="line">    硬件机制可将 OS 和 用户程序隔离</span><br></pre></td></tr></table></figure>
+
+<p>处理器状态（模式）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">现代处理器，cpu状态分为 二，三，或四种</span><br><span class="line">在 程序状态字寄存器中，专门设置一位，根据运行程序 对资源和指令的使用权限，设置不同的CPU状态</span><br></pre></td></tr></table></figure>
+
+<p>操作系统需要两种 CPU状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">内核态（kernel mode）： 运行操作系统程序   </span><br><span class="line">用户态（User mode）： 运行用户程序 </span><br><span class="line"></span><br><span class="line">特权指令 : 只能操作系统使用</span><br><span class="line">非特权指令 ： 用户程序可以使用的指令  （操作系统也能使用） </span><br></pre></td></tr></table></figure>
+
+<p>例子： x86系列处理器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">支持 4 个特权级别， 称为特权环： R0， R1， R2， R3</span><br><span class="line">R0相当于 内核态</span><br><span class="line">R3相当于 用户态</span><br><span class="line">R1，R2 介于之间</span><br><span class="line">不同级别能运行的指令集合不同</span><br><span class="line"></span><br><span class="line">目前大部分基于x86的操作系统都只使用了  R0，R3 两个级别</span><br></pre></td></tr></table></figure>
+
+<p>CPU状态之间的转换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">用户态 -》 内核态</span><br><span class="line">    唯一途径： 中断/异常/陷入机制</span><br><span class="line"></span><br><span class="line">内核态 -》 用户态</span><br><span class="line">    设置程序状态字PSW</span><br><span class="line">    </span><br><span class="line">一条特殊的指令： 陷入指令 （又称 访管指令， 用户态访问管理态的指令）        </span><br><span class="line">    提供给用户程序的接口，用户调用操作系统的服务</span><br><span class="line">    例如： int， trap， syscall， sysenter/sysexit</span><br></pre></td></tr></table></figure>
+
+<h3 id="中断与异常机制"><a href="#中断与异常机制" class="headerlink" title="中断与异常机制"></a>中断与异常机制</h3><ul>
+<li>介绍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">重要性： 好比汽车的发动机</span><br><span class="line">可以说： 操作系统是 由 &quot;中断驱动&quot; 或 &quot;事件驱动&quot; 的</span><br><span class="line">主要作用： </span><br><span class="line">   处理设备发来的中断请求</span><br><span class="line">   捕获用户程序提出的服务请求</span><br><span class="line">   防止用户程序执行过程中的破坏性活动</span><br><span class="line">   等等</span><br><span class="line">   </span><br><span class="line">概念： </span><br><span class="line">    CPU对系统发送的某个事件做成的一种反应 （事件的发送改变处理器的控制流）</span><br><span class="line">    CPU暂停正在执行的程序， 保留现场，去执行相应的事件处理程序，处理完成后返回断点继续执行</span><br><span class="line">    </span><br><span class="line">特点： </span><br><span class="line">    随机发送</span><br><span class="line">    自动处理</span><br><span class="line">    可恢复</span><br><span class="line">    </span><br><span class="line">中断的引入： </span><br><span class="line">    支持CPU和设备之间的并行操作</span><br><span class="line">异常的引入： </span><br><span class="line">    CPU执行指令时本身出现的问题 (错误异常处理程序，系统调用)</span><br><span class="line">    </span><br><span class="line">事件： </span><br><span class="line">    中断（外中断）：I/O中断，时钟中断，硬件故障    -- 外部事件</span><br><span class="line">    异常（内中断）：系统调用，页故障，保护性异常，断点指令，程序性异常 -- 执行本身程序引发的     </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>工作原理</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">软硬件配合完成</span><br><span class="line">硬件 -- 中断/异常的响应： </span><br><span class="line">    捕获中断源发出的 中断/异常请求，以一定方式响应，将处理器控制器交给特定的处理程序</span><br><span class="line">软件 -- 中断/异常的处理程序：</span><br><span class="line">    识别 中断/异常类型 并完成相应处理</span><br><span class="line">    </span><br><span class="line">中断响应： </span><br><span class="line">    处理器中有 中断寄存器</span><br><span class="line">    响应过程： CPU执行每条指令后扫描中断寄存器，若有中断，将中断触发器内容编码进入PSW相应位（中断码），查中断向量表，执行中断处理程序    </span><br><span class="line">    </span><br><span class="line">中断向量： </span><br><span class="line">    一个内存单元 - 存放 中断处理程序入口地址 和 程序运行所需的处理机状态字</span><br><span class="line">    </span><br><span class="line">中断处理程序： </span><br><span class="line">    设计操作系统时，为每一类中断编好处理程序，设置好中断向量表    </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png" alt="linux中断向量表"></p>
+<ul>
+<li>x86处理器 的中断/异常</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">中断： 硬件引发</span><br><span class="line">异常： 除零异常等， x86大概20种异常</span><br><span class="line">    系统调用： 用户态到内核态的唯一入口，是异常的一种 </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">中断控制器（PIC 、 APIC） ：将中断信号转换为 中断向量，引发CPU中断</span><br><span class="line"></span><br><span class="line">实模式： 中断向量表</span><br><span class="line">    存放中断服务程序的入口地址</span><br><span class="line"></span><br><span class="line">保护模式：  中断描述符表</span><br><span class="line">    采用 门（gate）描述符 数据结构 表示中断向量</span><br><span class="line">    门描述符类型：</span><br><span class="line">        任务门</span><br><span class="line">        中断门 （主要使用）： 中断门后 系统自动禁止中断</span><br><span class="line">        陷阱门 （主要使用）： 系统不禁止，可继续接收中断</span><br><span class="line">        调用门 </span><br></pre></td></tr></table></figure>
+
+<p>中断/异常 的硬件处理过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">确定 中断向量i</span><br><span class="line">通过IDTR寄存器，找到IDT中断描述符表， 查到第i项 中断描述符</span><br><span class="line">通过GDTR寄存器，找到GDT段描述符表，根据中断描述符中的段描述符，从GDT中获取到 中断处理程序的 段基址</span><br><span class="line">过程中需要多次特权级别检查</span><br><span class="line"></span><br><span class="line">检查是否发送特权级别变化，是则堆栈切换 （用户态，内核态切换 - 使用相应权级的堆栈）</span><br><span class="line">硬件压栈，保存上下文环境</span><br><span class="line">如果是中断门， 则清IF位，禁止继续接收中断， 陷阱门则不管</span><br><span class="line">根据 中断描述符的 段内偏移量 和 段描述符的段基址， 获取中断程序入口地址，进入执行 </span><br></pre></td></tr></table></figure>
+
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">用户在编程时可以调用的操作系统功能</span><br><span class="line">CPU 从用户态 到 内核态的唯一入口</span><br><span class="line"></span><br><span class="line">每种操作系统都提供几百种系统调用</span><br><span class="line">    进程控制</span><br><span class="line">    进程通信</span><br><span class="line">    文件使用</span><br><span class="line">    目录操作</span><br><span class="line">    设备管理</span><br><span class="line">    信息维护等等</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>系统调用， 库函数， 内核函数 概念区分</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">内核函数 是 系统调用 的处理程序</span><br><span class="line">库函数 是对 内核函数的分装 （如c库函数）</span><br><span class="line"></span><br><span class="line">应用程序可以直接调用内核函数来进行系统调用， 但一般是操作 库函数 来进行</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>系统调用机制的设计</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">中断/异常机制 -- 来支持 系统调用的实现</span><br><span class="line">一条特殊指令， 陷入指令（又称访管指令）  -- 引发异常，完成用户态到内核态的切换</span><br><span class="line">系统调用号和参数 -- 每个系统调用事先给定编号（功能号）</span><br><span class="line">系统调用表 -- 存放系统调用程序的入口地址</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">参数传递问题： 用户程序参数传递给内核</span><br><span class="line">    1. 陷入指令自带参数： 长度有限，参数有限</span><br><span class="line">    2. 通过寄存器传递（主要）： 操作系统和用户程序都能访问的寄存器， 数量有限，参数有限</span><br><span class="line">    3. 内存中开辟专门的堆栈区 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>系统调用执行过程</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CPU 执行到特殊的陷入指令： </span><br><span class="line">    中断/异常机制： 硬件保护现场； 查中断向量表， 最终把CPU控制权交给 系统调用总入口程序</span><br><span class="line">    系统调用总入口程序： 保存现场；参数保存进内核的堆栈，查系统调用表 把控制权转交给 相应系统调用的处理程序/内核函数</span><br><span class="line">    执行系统调用</span><br><span class="line">    恢复现场，返回用户程序</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>基于x86内核的 linux系统调用实现</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">陷入指令 为128号：  </span><br><span class="line">    int $0x80</span><br><span class="line">门描述符：     </span><br><span class="line">    系统初始化时，对IDT表中的128号门初始化对应中断了</span><br><span class="line">    门描述符2，3字节标识 段选择符， 0，1，6，7字节为偏移量， 最终能对应到 system_call() 中断总入口</span><br><span class="line">    门类型： 15 陷阱门，支持调用过程仍允许接收中断</span><br><span class="line">    DPL特权级别： 3， 与用户级别相同， 允许用户进程使用该门描述符  （是用户发起的系统调用，所以必须是3） </span><br><span class="line">    </span><br><span class="line">执行 int $0x80 命令</span><br><span class="line">    特权级别的改变， 切换栈  用户栈 -》 内核栈。   CPU指向新的栈地址</span><br><span class="line">    信息压栈， 最后返回使用</span><br><span class="line">    找到 系统调用内核函数入口地址，执行 </span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/%E4%B8%AD%E6%96%AD%E5%8F%91%E7%94%9F%E5%90%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4.png" alt="中断发送后操作系统的工作步骤"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" data-id="ckwwvfahi0000llok4xw623lm" data-title="操作系统-中断异常机制" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          操作系统-进程与线程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/12/01/os-%E7%AE%80%E4%BB%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">操作系统-简介</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%80%E4%BB%8B/" rel="tag">简介</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/">操作系统-进程与线程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/">操作系统-中断异常机制</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/01/os-%E7%AE%80%E4%BB%8B/">操作系统-简介</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/15/linux-software/">linux-software</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/04/code-review/">code-review</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 王大炮<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

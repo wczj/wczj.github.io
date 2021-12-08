@@ -4,26 +4,26 @@
   <meta charset="utf-8">
   
   
-  <title>进程与线程 | 大炮的博客</title>
+  <title>操作系统-进程与线程 | 大炮的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="进程基本概念； 进程状态及状态转换； 进程控制块的作用和内容； 进程控制操作； 进程地址空间与进程映像； 为什么引入线程？线程的应用场景； Web服务器的实现； 线程概念、线程与进程的区别； 线程实现的三种方式； Pthreads线程库及应用； 几个重要的概念：原语、可再入程序。  进程的基本概念12345多道程序设计 : 允许多个程序同时进入内存并运行， 提高系统效率并发环境和并发程序 :">
 <meta property="og:type" content="article">
-<meta property="og:title" content="进程与线程">
-<meta property="og:url" content="http://wczj.github.io/2021/12/02/process-and-thread/index.html">
+<meta property="og:title" content="操作系统-进程与线程">
+<meta property="og:url" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/index.html">
 <meta property="og:site_name" content="大炮的博客">
 <meta property="og:description" content="进程基本概念； 进程状态及状态转换； 进程控制块的作用和内容； 进程控制操作； 进程地址空间与进程映像； 为什么引入线程？线程的应用场景； Web服务器的实现； 线程概念、线程与进程的区别； 线程实现的三种方式； Pthreads线程库及应用； 几个重要的概念：原语、可再入程序。  进程的基本概念12345多道程序设计 : 允许多个程序同时进入内存并运行， 提高系统效率并发环境和并发程序 :">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
-<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
-<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
-<meta property="og:image" content="http://wczj.github.io/2021/12/02/process-and-thread/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
 <meta property="article:published_time" content="2021-12-02T13:28:54.000Z">
-<meta property="article:modified_time" content="2021-12-07T15:34:16.626Z">
+<meta property="article:modified_time" content="2021-12-08T01:45:51.405Z">
 <meta property="article:author" content="王大炮">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="进程与线程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wczj.github.io/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
+<meta name="twitter:image" content="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png">
   
     <link rel="alternate" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
   
@@ -80,9 +80,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-process-and-thread" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-os-进程与线程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/12/02/process-and-thread/" class="article-date">
+    <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="article-date">
   <time class="dt-published" datetime="2021-12-02T13:28:54.000Z" itemprop="datePublished">2021-12-02</time>
 </a>
     
@@ -98,7 +98,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      进程与线程
+      操作系统-进程与线程
     </h1>
   
 
@@ -137,15 +137,15 @@
 <li>等待态 : 因等待某个时间而暂时不能运行(如：等待读盘) - 又称为阻塞态，封锁态，睡眠态</li>
 </ul>
 <p><strong>三状态模型</strong></p>
-<p><img src="/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程三状态模型和状态转换"></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程三状态模型和状态转换"></p>
 <h3 id="其他状态"><a href="#其他状态" class="headerlink" title="其他状态"></a>其他状态</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">创建态： </span><br><span class="line">    已经完成进程创建的必要工作： 分配PID，填写PCB</span><br><span class="line">    但尚未同意执行该进程（如资源不足）</span><br><span class="line"></span><br><span class="line">终止态：</span><br><span class="line">    终止执行后，完成一些数据统计工作，资源回收工作</span><br><span class="line">    </span><br><span class="line">挂起态： </span><br><span class="line">    用于调节负载 （CPU忙不过来）</span><br><span class="line">    进程不占用内存空间， 其进程映像交换到磁盘上     </span><br></pre></td></tr></table></figure>
 
 <p><strong>五状态模型</strong></p>
-<p><img src="/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程五状态模型和状态转换"></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程五状态模型和状态转换"></p>
 <p><strong>七状态模型</strong></p>
-<p><img src="/2021/12/02/process-and-thread/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程七状态模型和状态转换"></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程七状态模型和状态转换"></p>
 <p><strong>linux状态转换示意图</strong></p>
-<p><img src="/2021/12/02/process-and-thread/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="linux状态转换示意图"></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="linux状态转换示意图"></p>
 <h3 id="进程队列"><a href="#进程队列" class="headerlink" title="进程队列"></a>进程队列</h3><p>按进程所处状态不同对进程进行管理</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">为每一类进程建立一个或多个队列  (如处于等待态， 按等待事件不同分多个队列）</span><br><span class="line">队列元素为 PCB</span><br><span class="line">伴随进程状态的改变，PCB从一个队列进入另一个队列</span><br></pre></td></tr></table></figure>
 
@@ -192,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://wczj.github.io/2021/12/02/process-and-thread/" data-id="ckwp13irt00000vok25yxh34r" data-title="进程与线程" class="article-share-link">Share</a>
+      <a data-url="http://wczj.github.io/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" data-id="ckwwvfahq000allok52vf9vrs" data-title="操作系统-进程与线程" class="article-share-link">Share</a>
       
       
       
@@ -205,9 +205,9 @@
 <nav id="article-nav">
   
   
-    <a href="/2021/11/15/linux-software/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">linux-software</div>
+      <div class="article-nav-title">操作系统-中断异常机制</div>
     </a>
   
 </nav>
@@ -234,7 +234,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%80%E4%BB%8B/" rel="tag">简介</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
     </div>
   </div>
 
@@ -244,7 +244,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">操作系统</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+      <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
     </div>
   </div>
 
@@ -266,7 +266,15 @@
       <ul>
         
           <li>
-            <a href="/2021/12/02/process-and-thread/">进程与线程</a>
+            <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/">操作系统-进程与线程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/">操作系统-中断异常机制</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/01/os-%E7%AE%80%E4%BB%8B/">操作系统-简介</a>
           </li>
         
           <li>
@@ -275,10 +283,6 @@
         
           <li>
             <a href="/2021/11/04/code-review/">code-review</a>
-          </li>
-        
-          <li>
-            <a href="/2021/11/04/hexo-blog/">hexo_blog</a>
           </li>
         
       </ul>
