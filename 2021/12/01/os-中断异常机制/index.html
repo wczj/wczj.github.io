@@ -1,21 +1,14 @@
-
-
 <!DOCTYPE html>
-<html lang="en" data-default-color-scheme=auto>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" href="/img/favicon.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta charset="utf-8">
   
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="王大炮">
-  <meta name="keywords" content="">
+  <title>操作系统-中断异常机制 | 大炮的博客</title>
+
+  <!-- keywords -->
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="操作系统运行环境与运行机制12345操作系统运行环境    CPU状态    中断&#x2F;异常机制运行机制    系统调用      12345678中央处理器（CPU）： 运算器，控制器，一系列寄存器 以及 高速缓存 构成    两类寄存器：         用户可见寄存器： 高级语言编译器分配使用，减少程序访问内存次数        控制和状态寄存器： 控制处理器的操作，操作系统代码使用常见控制状态">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统-中断异常机制">
@@ -30,219 +23,184 @@
 <meta property="article:author" content="王大炮">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="中断异常">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png">
   
-  <title>操作系统-中断异常机制 - 大炮的博客</title>
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
-
-
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+    <link rel="alternative" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="http://7xkj1z.com1.z0.glb.clouddn.com/head.jpg">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
 
   
-    
-    
-      
-      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
-    
   
 
   
-    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+<script src="//cdn.bootcss.com/require.js/2.3.2/require.min.js"></script>
+
   
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
 
 
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    var CONFIG = {"hostname":"wczj.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-<meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
-</head>
-
-
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
-    </a>
+  <div id="container">
+    <div id="particles-js"></div>
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xkj1z.com1.z0.glb.clouddn.com/head.jpg" class="js-avatar">
+			
+		</a>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
+		<hgroup>
+		  <h1 class="header-author"><a href="/"></a></h1>
+		</hgroup>
 
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                Home
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                Archives
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                Categories
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                Tags
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                About
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+			</div>
+		</div>
+	</header>				
+</div>
     </div>
-  </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide"></h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xkj1z.com1.z0.glb.clouddn.com/head.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author"></h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+				</div>
+			</nav>
+		</header>				
+	</div>
 </nav>
-
-    <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="操作系统-中断异常机制">
-              
-            </span>
-
-            
-              <div class="mt-3">
+      <div class="body-wrap"><article id="post-os-中断异常机制" class="article article-type-post" itemscope itemprop="blogPost">
   
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-12-01 11:28" pubdate>
-        December 1, 2021 am
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      undefined 字
-    </span>
-  
-
-  
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      NaN 分钟
-    </span>
-  
-
-  
-  
-</div>
-
-            
-          </div>
-
-          
-        </div>
-      </div>
+    <div class="article-meta">
+      <a href="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/" class="article-date">
+  	<time datetime="2021-12-01T03:28:54.000Z" itemprop="datePublished">2021-12-01</time>
+</a>
     </div>
-  </header>
-
-  <main>
+  
+  <div class="article-inner">
     
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      操作系统-中断异常机制
       
+    </h1>
+  
 
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">操作系统-中断异常机制</h1>
-            
-            <div class="markdown-body">
-              <h2 id="操作系统运行环境与运行机制"><a href="#操作系统运行环境与运行机制" class="headerlink" title="操作系统运行环境与运行机制"></a>操作系统运行环境与运行机制</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">操作系统运行环境</span><br><span class="line">    CPU状态</span><br><span class="line">    中断/异常机制</span><br><span class="line">运行机制</span><br><span class="line">    系统调用    </span><br></pre></td></tr></table></figure>
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" rel="tag">中断异常</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+	</div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="操作系统运行环境与运行机制"><a href="#操作系统运行环境与运行机制" class="headerlink" title="操作系统运行环境与运行机制"></a>操作系统运行环境与运行机制</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">操作系统运行环境</span><br><span class="line">    CPU状态</span><br><span class="line">    中断/异常机制</span><br><span class="line">运行机制</span><br><span class="line">    系统调用    </span><br></pre></td></tr></table></figure>
 
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">中央处理器（CPU）： 运算器，控制器，一系列寄存器 以及 高速缓存 构成</span><br><span class="line">    两类寄存器： </span><br><span class="line">        用户可见寄存器： 高级语言编译器分配使用，减少程序访问内存次数</span><br><span class="line">        控制和状态寄存器： 控制处理器的操作，操作系统代码使用</span><br><span class="line">常见控制状态寄存器： </span><br><span class="line">    程序计数器（PC program counter）：记录将要取出指令的地址  </span><br><span class="line">    指令寄存器（IR instruction register）： 记录最近取出的指令</span><br><span class="line">    程序状态字（PSW program status word） ： 记录处理器的运行状态，如条件码，模式，控制位等信息 </span><br></pre></td></tr></table></figure>
 
@@ -271,7 +229,7 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">软硬件配合完成</span><br><span class="line">硬件 -- 中断/异常的响应： </span><br><span class="line">    捕获中断源发出的 中断/异常请求，以一定方式响应，将处理器控制器交给特定的处理程序</span><br><span class="line">软件 -- 中断/异常的处理程序：</span><br><span class="line">    识别 中断/异常类型 并完成相应处理</span><br><span class="line">    </span><br><span class="line">中断响应： </span><br><span class="line">    处理器中有 中断寄存器</span><br><span class="line">    响应过程： CPU执行每条指令后扫描中断寄存器，若有中断，将中断触发器内容编码进入PSW相应位（中断码），查中断向量表，执行中断处理程序    </span><br><span class="line">    </span><br><span class="line">中断向量： </span><br><span class="line">    一个内存单元 - 存放 中断处理程序入口地址 和 程序运行所需的处理机状态字</span><br><span class="line">    </span><br><span class="line">中断处理程序： </span><br><span class="line">    设计操作系统时，为每一类中断编好处理程序，设置好中断向量表    </span><br></pre></td></tr></table></figure>
 
-<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png" srcset="/img/loading.gif" lazyload alt="linux中断向量表"></p>
+<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/linux%E4%B8%AD%E6%96%AD%E5%90%91%E9%87%8F%E8%A1%A8.png" alt="linux中断向量表"></p>
 <ul>
 <li>x86处理器 的中断/异常</li>
 </ul>
@@ -304,213 +262,115 @@
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">陷入指令 为128号：  </span><br><span class="line">    int $0x80</span><br><span class="line">门描述符：     </span><br><span class="line">    系统初始化时，对IDT表中的128号门初始化对应中断了</span><br><span class="line">    门描述符2，3字节标识 段选择符， 0，1，6，7字节为偏移量， 最终能对应到 system_call() 中断总入口</span><br><span class="line">    门类型： 15 陷阱门，支持调用过程仍允许接收中断</span><br><span class="line">    DPL特权级别： 3， 与用户级别相同， 允许用户进程使用该门描述符  （是用户发起的系统调用，所以必须是3） </span><br><span class="line">    </span><br><span class="line">执行 int $0x80 命令</span><br><span class="line">    特权级别的改变， 切换栈  用户栈 -》 内核栈。   CPU指向新的栈地址</span><br><span class="line">    信息压栈， 最后返回使用</span><br><span class="line">    找到 系统调用内核函数入口地址，执行 </span><br></pre></td></tr></table></figure>
 
-<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/%E4%B8%AD%E6%96%AD%E5%8F%91%E7%94%9F%E5%90%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4.png" srcset="/img/loading.gif" lazyload alt="中断发送后操作系统的工作步骤"></p>
+<p><img src="/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/%E4%B8%AD%E6%96%AD%E5%8F%91%E7%94%9F%E5%90%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%B7%A5%E4%BD%9C%E6%AD%A5%E9%AA%A4.png" alt="中断发送后操作系统的工作步骤"></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                  <div class="post-meta mr-3">
-                    <i class="iconfont icon-category"></i>
-                    
-                      <a class="hover-with-bg" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
-                    
-                  </div>
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
-                    
-                      <a class="hover-with-bg" href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/">中断异常</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">
-                  
-                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
-                  
-                </p>
-              
-              
-                <div class="post-prevnext">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">操作系统-进程与线程</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2021/12/01/os-%E7%AE%80%E4%BB%8B/">
-                        <span class="hidden-mobile">操作系统-简介</span>
-                        <span class="visible-mobile">Next</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-          </article>
-        </div>
-      </div>
+      
     </div>
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-      </div>
-    
   </div>
-</div>
-
-<!-- Custom -->
-
-
+  
     
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+<nav id="article-nav">
+  
+    <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">&lt;</strong>
+      <div class="article-nav-title">
+        
+          操作系统-进程与线程
+        
       </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
+    </a>
+  
+  
+    <a href="/2021/12/01/os-%E7%AE%80%E4%BB%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">操作系统-简介</div>
+      <strong class="article-nav-caption">&gt;</strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="ds-share share" data-thread-key="os-中断异常机制" data-title="操作系统-中断异常机制" data-url="http://wczj.github.io/2021/12/01/os-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E6%9C%BA%E5%88%B6/"  data-images="http://7xkj1z.com1.z0.glb.clouddn.com/head.jpg" data-content="操作系统-中断异常机制">
+    <div class="ds-share-inline">
+      <ul  class="ds-share-icons-16">
+      	<li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+        <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+        <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+        <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+        <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+      </ul>
+      <div class="ds-share-icons-more">
       </div>
     </div>
-  </div>
+ </div>
+ 
+
+
+
+
+
 </div>
-    
-
-    
-  </main>
-
-  <footer class="text-center mt-5 py-3">
-  <div class="footer-content">
-     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+      <div class="footer-left">
+        &copy; 2021 王大炮
+      </div>
+        <div class="footer-right">
+          <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/smackgg/hexo-theme-smackdown" target="_blank">Smackdown</a>
+        </div>
+    </div>
   </div>
-  
-
-  
-
-  
 </footer>
-
-
-  <!-- SCRIPTS -->
+    </div>
+    
   
-  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-<!-- Plugins -->
-
-
-  <script  src="/js/local-search.js" ></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
 
 
 
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
 
-
-
-  
-
-
-
-  
-    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
-  
-  
-    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
-  
-  
-    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
-  
+<script src="/js/main.js"></script>
 
 
 
 
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js"></script>
 
 
-  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var title = document.getElementById('subtitle').title;
-      
-      typing(title)
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 主题的启动项 保持在最底部 -->
-<script  src="/js/boot.js" ></script>
-
-
+  </div>
 </body>
 </html>
