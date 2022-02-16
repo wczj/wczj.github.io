@@ -9,15 +9,15 @@
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="进程的并发执行">
+  <meta name="description" content="进程的并发执行进程互斥1234竞争条件: 多进程读写共享数据，结果取决于进程执行的时序进程互斥： 多进程使用共享资源，资源排他性使用。临界资源，互斥资源，共享变量: 一次只能被一个进程使用临界区（互斥区）：各个进程中对某个临界资源实施操作的程序片段   实现进程互斥的方案 软件方案  dekker解法 12两个进程P，Q ， 以标志pturn， qturn 的true，false标识是否想进入临界">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统-同步互斥">
 <meta property="og:url" content="http://wczj.github.io/2021/12/15/os-%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/index.html">
 <meta property="og:site_name" content="大炮的博客">
-<meta property="og:description" content="进程的并发执行">
+<meta property="og:description" content="进程的并发执行进程互斥1234竞争条件: 多进程读写共享数据，结果取决于进程执行的时序进程互斥： 多进程使用共享资源，资源排他性使用。临界资源，互斥资源，共享变量: 一次只能被一个进程使用临界区（互斥区）：各个进程中对某个临界资源实施操作的程序片段   实现进程互斥的方案 软件方案  dekker解法 12两个进程P，Q ， 以标志pturn， qturn 的true，false标识是否想进入临界">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-12-15T14:43:53.000Z">
-<meta property="article:modified_time" content="2021-12-15T14:45:02.042Z">
+<meta property="article:modified_time" content="2022-02-15T00:55:45.968Z">
 <meta property="article:author" content="王大炮">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="同步互斥">
@@ -112,7 +112,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" style="font-size: 10px;">同步互斥</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+						<a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" style="font-size: 10px;">即时通讯</a> <a href="/tags/%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" style="font-size: 10px;">同步互斥</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
 					</div>
 				</section>
 				
@@ -201,7 +201,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="进程的并发执行"><a href="#进程的并发执行" class="headerlink" title="进程的并发执行"></a>进程的并发执行</h2>
+        <h2 id="进程的并发执行"><a href="#进程的并发执行" class="headerlink" title="进程的并发执行"></a>进程的并发执行</h2><h2 id="进程互斥"><a href="#进程互斥" class="headerlink" title="进程互斥"></a>进程互斥</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">竞争条件: 多进程读写共享数据，结果取决于进程执行的时序</span><br><span class="line">进程互斥： 多进程使用共享资源，资源排他性使用。</span><br><span class="line">临界资源，互斥资源，共享变量: 一次只能被一个进程使用</span><br><span class="line">临界区（互斥区）：各个进程中对某个临界资源实施操作的程序片段 </span><br></pre></td></tr></table></figure>
+
+<h3 id="实现进程互斥的方案"><a href="#实现进程互斥的方案" class="headerlink" title="实现进程互斥的方案"></a>实现进程互斥的方案</h3><ul>
+<li>软件方案</li>
+</ul>
+<p>dekker解法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">两个进程P，Q ， 以标志pturn， qturn 的true，false标识是否想进入临界区的意向</span><br><span class="line">然后以turn标志，处理两个都有意向的时候，某一个进行谦让设置为false，让另一个进入临界区</span><br></pre></td></tr></table></figure>
+
+<p>Peterson解法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">进程i:</span><br><span class="line">    enter_region(i) </span><br><span class="line">    进入临界区</span><br><span class="line">    leave_region(i)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>硬件方案</li>
+</ul>
+<p>屏蔽中断， TSL（XCHG）指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h2><p>多个进程发送的事件存在时序关系，需要合作完成一项任务</p>
+
       
     </div>
     
