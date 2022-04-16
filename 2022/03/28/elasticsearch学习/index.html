@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>elasticsearch学习 | 大炮的博客</title>
+
+  <!-- keywords -->
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="概述功能 分布式搜索引擎 大数据近实时分析引擎  学习 开发： 产品基本功能，底层原理，数据建模 运维： 容量规划； 性能优化； 问题诊断； 滚动升级 方案： 搜索与如何解决搜索； 大数据分析实践，理论知识实际场景  考试： elastic 官网简介123restful 接口， 供各种语言使用功能： 搜索，聚合      elastic 生态  logstash 开源服务端数据处理管道， 从不同源">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elasticsearch学习">
+<meta property="og:url" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="大炮的博客">
+<meta property="og:description" content="概述功能 分布式搜索引擎 大数据近实时分析引擎  学习 开发： 产品基本功能，底层原理，数据建模 运维： 容量规划； 性能优化； 问题诊断； 滚动升级 方案： 搜索与如何解决搜索； 大数据分析实践，理论知识实际场景  考试： elastic 官网简介123restful 接口， 供各种语言使用功能： 搜索，聚合      elastic 生态  logstash 开源服务端数据处理管道， 从不同源">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/elastic%20stack%E7%94%9F%E6%80%81%E5%9C%88.png">
+<meta property="og:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%90%9C%E7%B4%A2es%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E6%88%90.png">
+<meta property="og:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%8C%87%E6%A0%87%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/wangchao/person_blog/source/_posts/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%AD%A3%E6%8E%92:%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.png">
+<meta property="og:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/wangchao/person_blog/source/_posts/elasticsearch%E5%AD%A6%E4%B9%A0/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E5%9C%A8ES%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0.png">
+<meta property="article:published_time" content="2022-03-28T05:43:27.000Z">
+<meta property="article:modified_time" content="2022-03-31T10:43:44.696Z">
+<meta property="article:author" content="王大炮">
+<meta property="article:tag" content="elasticsearch">
+<meta property="article:tag" content="极客时间">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/elastic%20stack%E7%94%9F%E6%80%81%E5%9C%88.png">
+  
+    <link rel="alternative" href="/atom.xml" title="大炮的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="https://bucket-chao.oss-cn-shanghai.aliyuncs.com/test/avatar.jpg">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+
+  
+<script src="//cdn.bootcss.com/require.js/2.3.2/require.min.js"></script>
+
+  
+<script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div id="particles-js"></div>
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="https://bucket-chao.oss-cn-shanghai.aliyuncs.com/test/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/"></a></h1>
+		</hgroup>
+
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/kubernetes/" style="font-size: 10px;">kubernetes</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" style="font-size: 10px;">即时通讯</a> <a href="/tags/%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" style="font-size: 10px;">同步互斥</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" style="font-size: 15px;">极客时间</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" style="font-size: 10px;">网络协议</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide"></h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="https://bucket-chao.oss-cn-shanghai.aliyuncs.com/test/avatar.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author"></h1>
+			</hgroup>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-elasticsearch学习" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/" class="article-date">
+  	<time datetime="2022-03-28T05:43:27.000Z" itemprop="datePublished">2022-03-28</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      elasticsearch学习
+      
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/elasticsearch/" rel="tag">elasticsearch</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" rel="tag">极客时间</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/elasticsearch/">elasticsearch</a>
+	</div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><ul>
+<li>分布式搜索引擎</li>
+<li>大数据近实时分析引擎</li>
+</ul>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><ul>
+<li>开发： 产品基本功能，底层原理，数据建模</li>
+<li>运维： 容量规划； 性能优化； 问题诊断； 滚动升级</li>
+<li>方案： 搜索与如何解决搜索； 大数据分析实践，理论知识实际场景</li>
+</ul>
+<h2 id="考试：-elastic-官网"><a href="#考试：-elastic-官网" class="headerlink" title="考试： elastic 官网"></a>考试： elastic 官网</h2><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">restful 接口， 供各种语言使用</span><br><span class="line">功能： 搜索，聚合</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<h2 id="elastic-生态"><a href="#elastic-生态" class="headerlink" title="elastic 生态"></a>elastic 生态</h2><p><img src="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/elastic%20stack%E7%94%9F%E6%80%81%E5%9C%88.png"></p>
+<ul>
+<li>logstash 开源服务端数据处理管道， 从不同源采集数据，转换数据，发送到不同存储库</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">实时解析和转换数据</span><br><span class="line">    从IP地址破译地理位置</span><br><span class="line">    将PII（个人身份信息）数据匿名，排除敏感字段</span><br><span class="line">可扩展</span><br><span class="line">    200多个插件 （日志、数据库。。。）</span><br><span class="line">可靠安全性</span><br><span class="line">    持久化队列保证至少送达一次</span><br><span class="line">    数据传输加密</span><br><span class="line">监控            </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>kibana : 可视化分析利器</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数据可视化公司</span><br><span class="line">基于 logstash 的工具， 2013被es收购</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>BEATS : 轻量数据采集器</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">有多种不同的beat</span><br><span class="line">    filebeat： 日志，文件</span><br><span class="line">    packetbeat： 网络数据抓包</span><br><span class="line">    。。。</span><br></pre></td></tr></table></figure>
+
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p><img src="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%90%9C%E7%B4%A2es%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E6%88%90.png"></p>
+<p><img src="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%8C%87%E6%A0%87%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90.png"></p>
+<h1 id="安装上手"><a href="#安装上手" class="headerlink" title="安装上手"></a>安装上手</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/downloads/elasticsearch">二进制文件</a></li>
+<li>docker</li>
+<li>helm chart for k8s</li>
+<li>puppet module</li>
+</ul>
+<h2 id="文件目录结构"><a href="#文件目录结构" class="headerlink" title="文件目录结构"></a>文件目录结构</h2><ul>
+<li>bin ： 脚本执行文件 包括： 启动，安装插件，运行统计数据等</li>
+<li>config ： 集群配置文件</li>
+<li>JDK ： java运行环境</li>
+<li>data ： 数据文件</li>
+<li>lib ： java类库</li>
+<li>logs ： 日志文件</li>
+<li>modules ： 包含所有ES模块</li>
+<li>plugins ： 所有已安装插件</li>
+</ul>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><ul>
+<li>物理机</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/bin/elasticsearch 启动</span><br><span class="line">/bin/elasticsearch-plugin 插件管理   install 安装</span><br><span class="line"></span><br><span class="line">分布式</span><br><span class="line">./elasticsearch -E node.name=node1 -E cluster.name=geektime -E path.data=node1_data -d</span><br><span class="line">./elasticsearch -E node.name=node2 -E cluster.name=geektime -E path.data=node2_data -d</span><br><span class="line">./elasticsearch -E node.name=node3 -E cluster.name=geektime -E path.data=node3_data -d</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>docker</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h1><h2 id="索引，文档，RESTAPI"><a href="#索引，文档，RESTAPI" class="headerlink" title="索引，文档，RESTAPI"></a>索引，文档，RESTAPI</h2><h3 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ES是面向文档的， 文档是可搜索数据的最小单位</span><br><span class="line">文档会被 序列化为JSON格式，保存在ES中  （JSON对象由字段组成，每个字段有类型）</span><br><span class="line">每个文档都有一个 唯一ID， 可以自己指定/或ES自动生成</span><br><span class="line"></span><br><span class="line">类似数据的一条记录</span><br><span class="line">JSON文档格式灵活，不需要预先定义格 （字段类型可以指定，也可以ES自动推算）（支持 数组/嵌套）</span><br></pre></td></tr></table></figure>
+
+<p>文档的元数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ES用于标注文档的相关信息</span><br><span class="line">	</span><br><span class="line">	_index  	文档所属索引名称</span><br><span class="line">	_type			文档所属类型名称</span><br><span class="line">	_id 			文档唯一ID</span><br><span class="line">	_source		文档原始JSON数据</span><br><span class="line">	_version 	文档版本信息</span><br><span class="line">	_score		相关性打分</span><br></pre></td></tr></table></figure>
+
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">文档的容器， 一类文档的集合</span><br><span class="line">体现逻辑空间的概念：  索引有自己的Mapping定义，定义包含文档的字段名和字段类型</span><br><span class="line"></span><br><span class="line">索引的Mapping ： 	定义文档字段的类型 </span><br><span class="line">索引的Settings ： 定义不同的数据分布</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Shard 则是体现 物理空间的概念： 索引中的数据分散在 shard 上</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">索引的不同语意： </span><br><span class="line">	名称： 文档的集合， 可创建多个索引</span><br><span class="line">	动词： 保存一个文档到ES的过程 （在ES中是创建一个 倒排索引）  （有B树索引 ， 倒排索引）	</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>类型 type</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7.0 版本之前， 每个索引可以建立多个type, 每个type下就是同类文档</span><br><span class="line">7.0开始废弃不用，每个索引只能建立一个type （_doc）</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="REST-API"><a href="#REST-API" class="headerlink" title="REST API"></a>REST API</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">集成各种语言</span><br></pre></td></tr></table></figure>
+
+<h2 id="节点，集群，分片，副本"><a href="#节点，集群，分片，副本" class="headerlink" title="节点，集群，分片，副本"></a>节点，集群，分片，副本</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">分布式系统的可用性和扩展性</span><br><span class="line"></span><br><span class="line">高可用</span><br><span class="line">	服务可用： 允许有节点停止服务</span><br><span class="line">	数据可用： 部分节点丢失，不会丢失数据</span><br><span class="line">	</span><br><span class="line">可扩展： </span><br><span class="line">	请求量提升 /	数据不断增长  (将数据分布到所有节点上)</span><br></pre></td></tr></table></figure>
+
+<h3 id="ES的分布式架构"><a href="#ES的分布式架构" class="headerlink" title="ES的分布式架构"></a>ES的分布式架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">不同的集群 通过不同名字区分  (默认名字 elasticsearch)</span><br><span class="line">通过配置文件修改，或命令行 -E cluster.name=geektime 设定</span><br><span class="line">一个集群可以有一个或多个节点</span><br><span class="line"></span><br><span class="line">好处： </span><br><span class="line">	存储的水平扩容</span><br><span class="line">	提高系统的可用性，部分节点停止服务，整个集群服务不受影响</span><br></pre></td></tr></table></figure>
+
+<h3 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">节点： 一个 ES 的实例</span><br><span class="line">	本质就是一个JAVA进程</span><br><span class="line">	一台机器可运行多个ES进程，但生产环境一般建议一台机器一个实例</span><br><span class="line">每个节点设置名字： 通过配置文件，或启动命令行 -E node.name=node1 指定</span><br><span class="line">每个节点启动后，会分配一个UID，保存在 data 目录下</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>master-eligible nodes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">可以参加 选主流程，成为master 节点</span><br><span class="line"></span><br><span class="line">每个节点启动后： 默认就是一个 master eligible 节点</span><br><span class="line">	可设置 node.master: false 禁止</span><br></pre></td></tr></table></figure></li>
+<li><p>master node</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">当第一个节点启动时， 会将自己选举成 master 节点</span><br><span class="line">每个节点都保存了集群的状态， 只有 master 节点才能修改集群的状态信息   (任何节点都能修改会导致数据不一致)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>集群状态： 维护集群中的必要信息</p>
+<blockquote>
+<p>所有节点的信息</p>
+<p>所有索引 和 其相关的 Mapping 与 Setting 信息</p>
+<p>分片的路由信息</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>Data Node</p>
+<ul>
+<li>保存数据的节点，叫做Data Node， 负责保存分片数据 （在数据扩展 起重要作用）</li>
+</ul>
+</li>
+<li><p>Coordinating Node</p>
+<ul>
+<li>负责接受client的请求，将请求分发到合适节点，最终把结果汇聚到一起。</li>
+<li>每个节点默认起到 coordinating node 职责</li>
+</ul>
+</li>
+<li><p>Hot &amp; Warm Node</p>
+<ul>
+<li>冷热节点， Hot节点配置高， warm配置低（可存储比较旧的数据）</li>
+<li>不同硬件配置的 Data Node， 用来实现 Hot &amp; Warm 架构，降低集群部署的成本</li>
+</ul>
+</li>
+<li><p>Machine Learning Node</p>
+<ul>
+<li>负责跑 机器学习的 Job， 用来做异常检测</li>
+</ul>
+</li>
+<li><p>Tribe Node</p>
+<ul>
+<li>连接到不同的 ES集群，支持将这些集群当成一个单独的集群处理</li>
+<li>淘汰， 5.3开始使用 cross cluster search(跨集群搜索)</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>节点类型的配置： 生成环境中，应该设置单一角色的节点</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>节点类型</th>
+<th>配置参数</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>master eligible</td>
+<td>node.master</td>
+<td>true</td>
+</tr>
+<tr>
+<td>data</td>
+<td>Node.data</td>
+<td>true</td>
+</tr>
+<tr>
+<td>ingest</td>
+<td>node.ingest</td>
+<td>True</td>
+</tr>
+<tr>
+<td>coordinating only</td>
+<td>无</td>
+<td>每个节点默认都是coordinating节点。设置其他类型则为false</td>
+</tr>
+<tr>
+<td>machine learning</td>
+<td>node.ml</td>
+<td>true （需 enable x-pack ）</td>
+</tr>
+</tbody></table>
+<h3 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h3><ul>
+<li><p>主分片 （ primary shard ）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">解决数据水平扩展的问题。  主分片可以将数据分布到集群内的所有节点之上</span><br><span class="line">	一个分片 是一个运行的 lucene 的实例</span><br><span class="line">	主分片数 在索引创建时指定， 后续不允许修改， 除非 Reindex</span><br></pre></td></tr></table></figure></li>
+</ul>
+<ul>
+<li><p>副本 （ replica shard ）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">用以解决数据高可用的问题。 副本分片是主分片的拷贝</span><br><span class="line">	副本分片数 可以动态调整</span><br><span class="line">	增加副本数，还可在一定程度上提高服务的可用性 （ 读取的吞吐 ）</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>分片的设置： 生成环境分片的设定，提前做好容量规划</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">分片数设置过小： </span><br><span class="line">	后续无法增加及节点实现水平扩展</span><br><span class="line">	单个分片数据量太大，导致数据重新分配耗时</span><br><span class="line">分片数设置过大， 7.0 开始， 默认主分片设置成1， 解决了 over-sharding 的问题</span><br><span class="line">	影响搜索结果的 相关性打分，影响 统计结果的准确性</span><br><span class="line">	单个节点上过多的分片，会导致资源浪费， 同时也会影响性能</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">查看 集群健康状况</span><br><span class="line">GET _cluster/health</span><br><span class="line"></span><br><span class="line">green - 主分片 和 副本 都正常</span><br><span class="line">yellow - 主分片正常， 有副本分片未正常分配</span><br><span class="line">red - 有主分片未能分配  （例： 当服务器磁盘容量超过 85% 时， 去创建了一个新的索引</span><br></pre></td></tr></table></figure>
+
+<h2 id="文档的基本-CRUD"><a href="#文档的基本-CRUD" class="headerlink" title="文档的基本 CRUD"></a>文档的基本 CRUD</h2><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>命令 （type约定用_dec)</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Index</td>
+<td>PUT my_index/_doc/1</td>
+<td>如果ID不存在，创建信息的。 已经存在则删除旧的创建新的，版本号增加</td>
+</tr>
+<tr>
+<td>Create</td>
+<td>PUT my_index/_create/1</td>
+<td>如果id已经存在，会失败</td>
+</tr>
+<tr>
+<td>Read</td>
+<td>GET my_index/_doc/1</td>
+<td></td>
+</tr>
+<tr>
+<td>Update</td>
+<td>POST my_index/_update/1</td>
+<td>文档必须已经存在， 更新只会对相应字段做增量修改</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>DELETE my_index/_doc/1</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="创建说明"><a href="#创建说明" class="headerlink" title="创建说明"></a>创建说明</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">支持 自动生成文档ID 和 指定文档ID 两种方式</span><br><span class="line"></span><br><span class="line">	通过调用  POST  /my_index/_doc    (系统自动创建ID)</span><br><span class="line">	通过			PUT  /my_index/_create/1 创建， 指定 _create , 如果ID文档已存在，操作失败</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意： create是创建新的， index 是 删除旧的创建新的， update是在旧的上面做增量修改</p>
+</blockquote>
+<h3 id="批量操作"><a href="#批量操作" class="headerlink" title="批量操作"></a>批量操作</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">批量操作， 减少 网络连接产生的开销，提高性能</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Bulk API</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">POST _bulk</span><br><span class="line">支持一次API调用中， 对不同索引进行不同操作</span><br><span class="line"></span><br><span class="line">支持四种操作： </span><br><span class="line">	Index， Creat， Update， Delete</span><br><span class="line"></span><br><span class="line">可以在 URI 中指定Index， 也可以再请求 payload 中进行</span><br><span class="line">操作中 单条操作失败， 并不会影响其他操作</span><br><span class="line">返回结果包括 每一条操作执行的结果</span><br></pre></td></tr></table></figure></li>
+<li><p>mget 批量读取</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_mget</span><br></pre></td></tr></table></figure></li>
+<li><p>msearch 批量查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">POST /_msearch</span><br></pre></td></tr></table></figure></li>
+</ul>
+<blockquote>
+<p>常见错误返回</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">无法连接：   网络故障或集群挂了</span><br><span class="line">连接无法关闭： 网络故障或节点出错</span><br><span class="line">429 ： 集群过于繁忙</span><br><span class="line">4xx ： 请求体格式错误</span><br><span class="line">500 ： 集群内部错误</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意： 批量操作一次请求不宜过多</p>
+</blockquote>
+<h2 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">数据引擎中的 重要数据结构</span><br></pre></td></tr></table></figure>
+
+<h3 id="书本对比理解"><a href="#书本对比理解" class="headerlink" title="书本对比理解"></a>书本对比理解</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">书本开始： 有目录，书本内容的索引    - 正排索引</span><br><span class="line">	根据目录中的 章节名称对应页码 查询具体内容</span><br><span class="line">	</span><br><span class="line">有一些书本最后： 有一些重要内容对应页码的索引页  -  倒排索引</span><br></pre></td></tr></table></figure>
+
+<h3 id="搜索引擎中"><a href="#搜索引擎中" class="headerlink" title="搜索引擎中"></a>搜索引擎中</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">正排索引： 文档ID 到 文档内容和单词 的关联</span><br><span class="line">倒排索引： 单词 到 文档ID 的关系</span><br></pre></td></tr></table></figure>
+
+<p>一个例子：</p>
+<p><img src="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/wangchao/person_blog/source/_posts/elasticsearch%E5%AD%A6%E4%B9%A0/%E6%AD%A3%E6%8E%92:%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95.png" alt="image-20220330115421025"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">左边正排索引， 三篇 es书 的文档</span><br><span class="line">右边倒排索引， 所有词条的索引，出现次数， 在哪个文档中哪个位置</span><br></pre></td></tr></table></figure>
+
+<h3 id="倒排索引的核心组成"><a href="#倒排索引的核心组成" class="headerlink" title="倒排索引的核心组成"></a>倒排索引的核心组成</h3><ul>
+<li>单词词典（ term dictionary ）, 记录所有文档的单词， 记录单词 到 倒排列表 的关联关系<ul>
+<li>单词词典很大， 通过 B+树 或 哈希拉链法实现， 满足高性能的插入和查询</li>
+</ul>
+</li>
+<li>倒排列表 ( posting list ) ， 记录了 单词对应的文档 的结合， 由倒排索引项组成<ul>
+<li>倒排索引项（posting）<ul>
+<li>文档ID</li>
+<li>词频 TF - 该单词在文档中出现的次数， 用于相关性评分</li>
+<li>位置(position) - 单词在文档中分词的位置。 用于 语句搜索</li>
+<li>偏移（offset）-记录单词的开始结束位置， 实现高亮显示</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>上面例子在 ES中的实现</p>
+<p><img src="/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/wangchao/person_blog/source/_posts/elasticsearch%E5%AD%A6%E4%B9%A0/%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E5%9C%A8ES%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0.png" alt="image-20220330121209363"></p>
+<ul>
+<li>ES中 JSON文档每个字段都有自己的 倒排索引</li>
+<li>可以指定 对某些字段不做索引<ul>
+<li>优点： 节省存储空间</li>
+<li>缺点： 字段无法被搜索</li>
+</ul>
+</li>
+</ul>
+<h2 id="通过-analyzer-进行分词"><a href="#通过-analyzer-进行分词" class="headerlink" title="通过 analyzer 进行分词"></a>通过 analyzer 进行分词</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">analysis 文本分析： 把全文本转换为 一系列单词 (term / token)的过程， 也叫 分词</span><br><span class="line"></span><br><span class="line">analysis 通过 analyzer 实现</span><br><span class="line">	可使用ES内置的分析器 / 或按需定制化分析器</span><br><span class="line"></span><br><span class="line">除了 数据写入时 转换词条， 匹配Query语句时也需要用相同的分析器对查询语句进行分享</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分词器是专门 处理分词的组件， analyzer 由三部分组成 （按顺序执行）<ul>
+<li>character filters （ 针对原始文本处理， 例如去除html ）</li>
+<li>Tokenizer （ 按照规则切分为 单词 ）</li>
+<li>Token Filter （ 将切分的单词进行加工， 小写，删除 stopwords，增加同义词 ）</li>
+</ul>
+</li>
+</ul>
+<h3 id="ES内置分词器"><a href="#ES内置分词器" class="headerlink" title="ES内置分词器"></a>ES内置分词器</h3><ul>
+<li>standard analyzer - 默认分词器，按词切分，小写处理</li>
+<li>simple - 按 非字母切分 （符号被过滤）， 小写处理</li>
+<li>stop - 小写处理， 停止词过滤（the，a，is）</li>
+<li>whitespace - 按空格切分，不转小写</li>
+<li>keyword - 不分词，直接将输入当做输出</li>
+<li>patter - 正则表达式， 默认 \W+ (非字符分割)</li>
+<li>language - 提供 30多种常见语言的分词器</li>
+<li>customer - 自定义分词器</li>
+</ul>
+<h3 id="使用-analyzer-API"><a href="#使用-analyzer-API" class="headerlink" title="使用 _analyzer API"></a>使用 _analyzer API</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /_analyze        // 直接指定 analyzer 进行测试 对文本如何分词</span><br><span class="line">&#123;&quot;analyzer&quot;:&quot;standard&quot;, &quot;text&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST my_index/_analyze  // 指定索引字段， 查看 该字段如何进行分词</span><br><span class="line">&#123;&quot;field&quot;:&quot;&quot;, &quot;text&quot;:&quot;&quot;&#125;  </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /_analyze	 // 自定义分词测试， 定义一个tokenizer，定义fileter， 组合后 是如何进行分词的</span><br><span class="line">&#123;&quot;tokenizer&quot;:&quot;standard&quot;,&quot;filter&quot;:[&quot;&quot;], text:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="中文分词-的难点"><a href="#中文分词-的难点" class="headerlink" title="中文分词 的难点"></a>中文分词 的难点</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">中文句子，切分成一个个词 （而不是字）</span><br><span class="line">英文，单词有自然的空格作为分割</span><br><span class="line">中文，在不同上下文有不同理解</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>ICU Analyzer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">安装plugin：  elasticsearch-plugin install analysis-icu</span><br><span class="line">提供unicode支持，更好支持亚洲语言</span><br></pre></td></tr></table></figure></li>
+<li><p>IK</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">支持自定义词库， 支持热更新分词字典</span><br></pre></td></tr></table></figure></li>
+<li><p>THULAC</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">清华大学自然语言处理 和 社会人文计算实验室的一套中文分词器</span><br></pre></td></tr></table></figure>
+
+<h2 id="Search-API"><a href="#Search-API" class="headerlink" title="Search API"></a>Search API</h2><ul>
+<li>URI search<ul>
+<li>在URL中使用查询参数</li>
+</ul>
+</li>
+<li>Request Body search<ul>
+<li>使用 ES 提供的， 基于JSON格式的更加完备的 Query Domain Specific Language （DSL）</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">指定查询的索引</span><br><span class="line">	/_search  							集群上所有的索引</span><br><span class="line">	/index1/_search  				索引index1</span><br><span class="line">	/index1,index2/_search 	索引 index1，2</span><br><span class="line">	/index*/_search 				以index开头的索引</span><br></pre></td></tr></table></figure>
+
+<h3 id="搜索的相关性"><a href="#搜索的相关性" class="headerlink" title="搜索的相关性"></a>搜索的相关性</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">搜索是： 用户 和 搜索引擎 的对话</span><br><span class="line">用户关心的是： 搜索结果的相关系</span><br><span class="line">	是否可以找到所有相关的内容</span><br><span class="line">	有多少不相关的内容被返回了</span><br><span class="line">	文档的打分是否合理</span><br><span class="line">	结合业务需求，平衡结果排名</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Web 搜索<ul>
+<li>page rank 算法 （不仅仅是内容，更重要的是内容的可信度）</li>
+</ul>
+</li>
+<li>电商搜索<ul>
+<li>扮演 销售的角色</li>
+<li>提高用户购物体验，提升网站销售业绩，去库存</li>
+</ul>
+</li>
+</ul>
+<h3 id="衡量相关性"><a href="#衡量相关性" class="headerlink" title="衡量相关性"></a>衡量相关性</h3><p>学科 information Retrieval</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">precision (查准率) - 尽可能返回较少的无关文档</span><br><span class="line">recall （查全率） - 尽可能返回较多的相关文档</span><br><span class="line">ranking - 是否能够按照相关度进行排序</span><br></pre></td></tr></table></figure>
+
+<h2 id="URI-search-详解"><a href="#URI-search-详解" class="headerlink" title="URI search 详解"></a>URI search 详解</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">通过 URI query 实现搜索</span><br><span class="line">	q指定查询语句： 使用</span><br><span class="line">	df 默认字段， 不指定会对所有字段机械能查询</span><br><span class="line">	sort 排序 / from 和 size 用于分页</span><br><span class="line">	profile 查看 查询是如何被执行的</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>指定字段 ， 泛查询(会查询所有字段)</p>
+<ul>
+<li>q=title:2021 / q=2021</li>
+</ul>
+</li>
+<li><p>Term， Phrase （ 查询 beautiful mind ）</p>
+<ul>
+<li>Term ： 等效 OR</li>
+<li>Phrase：等效 AND， 还要求 前后顺序一致</li>
+</ul>
+</li>
+<li><p>分组 与 引号</p>
+<ul>
+<li>title:(beautiful AND mind)</li>
+<li>title=”beautiful mind”</li>
+</ul>
+</li>
+<li><p>布尔操作</p>
+<ul>
+<li>AND / OR / NOT 或者 &amp;&amp; / || /    !      (必须大写)</li>
+</ul>
+</li>
+<li><p>分组</p>
+<ul>
+<li><code>+ 表示 must</code></li>
+<li><code> - 表示 must_not</code></li>
+<li>title:(+matrix -reloaded)</li>
+</ul>
+</li>
+<li><p>范围查询</p>
+<ul>
+<li>区间表示： []闭区间， {}开区间</li>
+<li>year:{2019 TO 2018}</li>
+</ul>
+</li>
+<li><p>算数符号</p>
+<ul>
+<li>year:&gt;2010</li>
+</ul>
+</li>
+<li><p>通配符查询 （ 效率低，占用内存大，不建议使用）</p>
+<ul>
+<li>？ 代表一个字符， * 代表 0 或 多个字符</li>
+</ul>
+</li>
+<li><p>正则表达</p>
+<ul>
+<li>title:[bt]oy</li>
+</ul>
+</li>
+<li><p>模糊匹配 与 近似查询</p>
+</li>
+</ul>
+<h2 id="Request-Body-与-Query-DSL-介绍"><a href="#Request-Body-与-Query-DSL-介绍" class="headerlink" title="Request Body 与 Query DSL 介绍"></a>Request Body 与 Query DSL 介绍</h2><ul>
+<li>将查询语句通过 HTTP Request Body 发送给 ES</li>
+<li>Query DSL</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line"></span><br><span class="line">## Query string  与  Simple Query string</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Dynamic Mapping 和 常见字段类型</span><br><span class="line"></span><br><span class="line">### Mapping</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>类似于 数据库中的 schema 的定义， 作用：<br>    定义索引中 字段的名称<br>    定义字段的数据类型<br>    字段，倒排索引的相关配置 （ Analyzed or Not Analyzed， Analyzer ）</p>
+<p>Mapping 会把 JSON文档 映射成 Lucene 所需要的扁平格式</p>
+<p>一个Mapping属于一个索引的Type  （ 7.0 开始一个索引一个type ）<br>    每个文档都属于 一个索引的type<br>    一个type 有一个 Mapping的定义<br>    7.0开始， 不需要在mapping定义中指定type信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 什么是 Dynamic Mapping</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>  写入文档时： 如果索引不存在，自动创建索引<br>  ES自动根据文档信息推算出字段的类型</p>
+<p>  有时候会推算不对，如地理信息 （类型不对，会导致一些功能出错）<br>  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 能否更改mapping的字段类型</span><br><span class="line"></span><br><span class="line">  - 新增字段</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>    dynamic 设为true， 一旦有新增字段的文档写入， mapping也同时被更新<br>    dynamic 设为 false， mapping不会更新，新增字段的数据无法被索引，但信息会出现在 _source 中<br>    dynamic 设置为 strict， 文档写入失败<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 已有字段， 不在支持修改字段定义</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>    lucene 实现的倒排索引， 一旦生成，不允许修改<br>    改变字段类型， 必须 Reindex API， 重建索引<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 原因</span><br><span class="line">  - 修改字段的数据类型， 导致已被索引的数据无法被搜索</span><br><span class="line">  - 增加新的字段不会有影响</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 显示Mapping的设置与常见参数介绍</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>定义一个Mapping</p>
+<p>PUT movies<br>{<br>    “mappings”:{<br>    // 定义mapping<br>    }<br>}</p>
+<p>建议：<br>    参考API手册， 纯手写<br>    步骤：<br>        创建一个临时的index， 写入一些样本数据<br>        通过访问 mapping API 获得临时文件的动态 Mapping 定义<br>        进行修改后，使用该配置创建真正的索引<br>        删除临时索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>控制当前字段是否被索引： 默认为true， 如果要设置为不可被搜索，字段添加设置 “index”:false</p>
+<p>null_value, 需要对null值实现搜索： 只有keyword类型支持设定 “Null_value”:”NULL”</p>
+<p>_all 在版本7中被 copy_to 所替代： copy_to 将字段的数值拷贝到目标字段（如 firstName，lastName 两个字段拷贝到 fullName，实现全名称搜索）， copy_to 目标字段不出现在_source 中</p>
+<p>数组类型：   ES不提供专门的数组类型。 但任何字段，都可以包含多个相同类型的数值 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 控制 倒排索引 记录内容的配置</span><br><span class="line">  - docs - 记录 doc id</span><br><span class="line">  - freqs - 记录 doc id 和 term frequencies</span><br><span class="line">  - positions - 记录 doc id / term frequencies / term position </span><br><span class="line">  - offsets - 记录 doc id / term frequencies / term position / character offects</span><br><span class="line">- Text 类型默认记录 postions， 其他默认为 docs</span><br><span class="line">- 记录内容越多，占用存储空间越大</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##  多字段特性 及 mapping中配置自定义 Analyzer</span><br><span class="line"></span><br><span class="line">- 多字段特性</span><br><span class="line">  - 厂商名字实现精确匹配</span><br><span class="line">    - 增加一个 keyword 字段</span><br><span class="line">  - 使用不同的 analyzer</span><br><span class="line">    - 不同语言</span><br><span class="line">    - pinyin 字段的搜索  （ 中文实现拼音搜索）</span><br><span class="line">    - 支持为 搜索和索引 指定不同的analyzer</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Excat values : 包括 数字 / 日期 / 具体一个字符串   （ES中的 keyword）（在索引时，不分词）<br>Full Text : 全文本，非结构化的文本树  （ES中的 text）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 自定义分词</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当ES自带的分词器 无法满足，可以自定义分词器。 通过自组合不同组件实现：<br>    Character Filter ：<br>        在Tokenizer之前，对文本进行第一步处理。<br>        可配置多个，会影响Tokenizer的 position 和 offset 信息<br>            1. HTML strip  -  去除 html 标签<br>            2. Mapping  -  字符串替换<br>            3. Pattern replace  -  正则匹配替换</p>
+<pre><code>Tokenizer ： 
+    将原始文本安装一定规则，切分为词 （ term or token ）
+    ES内置的： whitspace / standard / uax_url_email / pattern / keyword / path hierarchy
+    可使用Java开发插件，实现自己的Tokenizer
+
+Token Filter ： 
+    将Tokenizer 输出的单词（ term ）， 进行增加，修改，删除
+    ES自带的 Token Filters：  lowercase（小写） / stop（停止词） / synonym(添加近义词)
+</code></pre>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>创建索引时， 在 settings 中 自定义 analysis </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Index Template 和 Dynamic Template</span><br><span class="line"></span><br><span class="line">- Index template  -  帮助设置 Mappings 和 Settings， 并按照一定规则，自动匹配到新创建的索引之上</span><br><span class="line">  - 模板 仅在一个索引被新创建时，才会产生作用。 修改模板不会影响已创建的索引</span><br><span class="line">  - 可设置多个 索引 模板， 这些设置会被 &quot;merge&quot; 在一起</span><br><span class="line">  - 可指定 &quot;order&quot; 的数值， 控制 &quot;merging&quot;的过程</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当一个索引 被新创建时<br>    应用ES默认的 settings 和 mappngs<br>    应用 order 数值低的 Index Template 中的设定<br>    应用 order 数值高的 Index Template 中的设定，之前设定被覆盖<br>    应用 用户指定的 Settings 和 Mappings，并覆盖之前模板中的设定</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- Dynamic Template  ： 根据ES识别的数据类型，结合字段名称，动态设定 字段类型</span><br><span class="line">  - 所有 字符串类型设定成 keyword， 或关闭 keyword</span><br><span class="line">  - is 开头的字段都设置成 boolean</span><br><span class="line">  - long_ 开头的都设置成 long 类型</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Dynamic Template 定义在 某个索引的 Mapping 中<br>Template有一个 名称<br>匹配规则是 一个数组<br>为匹配到字段设置 Mapping</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">## ES 聚合分析介绍</span><br><span class="line"></span><br><span class="line">### 聚合 （ aggregation )</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>ES 除搜索外，提供 针对ES数据进行统计分析的功能<br>    实时性高<br>    Hadoop （T+1）<br>通过聚合，得到数据的概览，分析和总结全套的数据<br>高性能， 只需要一条语句，就可以从ES中得到分析结果 (无需客户端自己去实现分析逻辑)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>kibana 可视化报表 - ES的聚合分析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 聚合的分类</span><br><span class="line">  - Bucket Aggregation  -  满足特定条件文档</span><br><span class="line">    - Term &amp; Range （ 时间 / 年龄区间 / 地理位置 ）</span><br><span class="line">  - Metric Aggregation  -  一些数学运算， 可以对文档字段进行统计分析</span><br><span class="line">    - 基于数据集 计算结果， 支持字段上的计算，也支持脚本产生的结果上计算</span><br><span class="line">    - 数字计算，输出一个值： min / max / sum / avg / cardinality </span><br><span class="line">    - 输出多个值： stats / percentiles / percentile_ranks</span><br><span class="line">  - Pipeline Aggregation  -  对其他聚合结果进行二次聚合</span><br><span class="line">  - Matrix Aggregation  -  支持对多个字段的操作并提供一个结果矩阵</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 深入搜索</span><br><span class="line"></span><br><span class="line">## 基于词项和基于全文的搜索</span><br><span class="line"></span><br><span class="line">### 基于Term的查询</span><br><span class="line"></span><br><span class="line">- Term : 表达语意的最小单位。 搜索 和 利用统计语言模型进行自然语言处理 都需要处理Term</span><br><span class="line">- 特点：</span><br><span class="line">  - Term Level Query：  Term / Range / Exists / Prefix  / wildcard</span><br><span class="line">  - Term查询，对输入不做分词。 在倒排索引中查找准确的词项，并为每个包含该词项的文档进行 相关度算分</span><br><span class="line">  - 可以通过复合查询 Constant Score 将查询转换成一个 Filtering， 跳过算分，并可以有效利用缓存， 提高性能</span><br><span class="line"></span><br><span class="line">### 基于全文的查询</span><br><span class="line"></span><br><span class="line">- Match Query   /  Match Phrase Query  /  Query String Query</span><br><span class="line">- 特点： </span><br><span class="line">  - 索引 和 搜索 时都会进行分词， 查询字符串先传递到一个合适的分词器，生成一个供查询的词项列表</span><br><span class="line">  - 查询过程，先 对输入的查询进行分词， 然后每个词项逐个进行底层的查询打分，最终将结果汇总。 为每个文档生成一个算分。 </span><br><span class="line"></span><br><span class="line">## 结构化搜索</span><br><span class="line"></span><br><span class="line">- 对 结构化数据 的搜索</span><br><span class="line">  - 日期，布尔，数字 都是结构化的。  有精确的格式，可以对这些格式进行逻辑操作。 范围，大小等</span><br><span class="line">- 文本也可以结构化</span><br><span class="line">  - 可以做  精确匹配 或者 部分匹配  （ term查询 / prefix前缀查询 等)</span><br><span class="line">- 结构化结果只有 &quot;是&quot;  或 &quot;否&quot; 两个值。 根据场景需要决定是否需要打分</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 搜索的相关性算分</span><br><span class="line"></span><br><span class="line">### 相关性</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>搜索的相关性算分：  描述 文档 和 查询语句 匹配的程度。 ES会对每个匹配查询条件的结果进行算分 _score<br>打分的本质是 排序，  把最符合用户需求的文档排在前面。  ES5之前的默认算分采用 TF-IDF， 现在采用 BM25</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### TF-IDF</span><br><span class="line"></span><br><span class="line">- 词频 TF ( Term Frequency ) ： 检索词在一篇文档中出现的频率  </span><br><span class="line">  - 检索词出现的次数 除以 文档的总字数</span><br><span class="line">  - 度量一条查询和结果文档相关性的简单方法： 将搜索中每个词的TF进行相加 </span><br><span class="line">  - Stop Word （停止词） ， 如&quot;的&quot;， 在文档中出现很多次，但对贡献相关度几乎没有用处，不应考虑它们的TF</span><br><span class="line"></span><br><span class="line">- 逆文档频率IDF ( Inverse Document Frequency ) ： </span><br><span class="line"></span><br><span class="line">  - DF： 检索词在所有文档中出现的频率</span><br><span class="line">  - 而IDF， 简单说就是公式：  log(全部文档数 / 检索词出现过的文档总数)</span><br><span class="line"></span><br><span class="line">- TF-IDF 本质上就是将 TF 求和 变成了 加权求和</span><br><span class="line"></span><br><span class="line">  - 例子： 搜索 区块链的应用   ( 分词为： 区块链  的  应用  三个词)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>TF(区块链)*IDF(区块链) + TF(的)*IDF(的) + TF(应用)*IDF(应用)
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### BM25</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</code></pre>
+<p>和经典的TF-IDF， 当TF无限增加时， BM25算分会趋于一个数值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 定制 Similarity</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>PUT /my_index<br>{<br>    “settings”:{<br>        “similarity”:{<br>            “custom_similarity”:{<br>                “type”:”BM25”,<br>                “b”:0,<br>                “k1”:2<br>            }<br>        }<br>    }<br>}<br>K 默认值是 1.2， 数值越小， 饱和度越高<br>b 默认值是 0.75（取值范围0-1）， 0代表禁止  Normalization</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Boosting Relevance</span><br><span class="line"></span><br><span class="line">- Boosting 控制相关度的一种手段 （ 索引，字段  或查询子条件）</span><br><span class="line">- 含义： </span><br><span class="line">  - boost &gt; 1 时， 打分相关度 相对性的提升</span><br><span class="line">  - 0 &lt; boost &lt; 1 , 打分权重 降低</span><br><span class="line">  - boost &lt; 0 , 贡献负分</span><br><span class="line"></span><br><span class="line">## Query &amp; Filtering 与 多字符串多字段查询</span><br><span class="line"></span><br><span class="line">- 高级搜索的功能： 支持多选 文本 输入， 针对多个字段进行搜索</span><br><span class="line">- 搜索引擎 一般也提供 基于时间，价格等条件的过滤</span><br><span class="line">- 在ES中， 有 Query 和 Filter 两种不同的 Context</span><br><span class="line">  - Query Context：相关性算分</span><br><span class="line">  - Filter Context： 不算分，利用缓存，更好性能</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### bool 查询</span><br><span class="line"></span><br><span class="line">- 一个 或者 多个 查询子句的组合 （ 4种子句）</span><br><span class="line">  - 相关性 除了全文本检索， 也使用 yes|no 的子句， 匹配子句越多，评分越高</span><br><span class="line">  - 子查询顺序任意， 可嵌套多个查询</span><br><span class="line">  - must ： 必须匹配，贡献算分</span><br><span class="line">  - should ： 选择性匹配， 贡献算分</span><br><span class="line">  - must_not ：必须不匹配， 是 filter context， 不贡献算分</span><br><span class="line">  - filter ： 过滤条件，必须匹配， 是 filter context， 不贡献算分</span><br><span class="line"></span><br><span class="line">- 结构化查询  ： 包含而不是相等 的问题   （多值字段 ）</span><br><span class="line">  - 增加一个 count 字段进行计数</span><br><span class="line"></span><br><span class="line">- 查询语句的结构， 对相关度算分的影响</span><br><span class="line">  - 同一层级的竞争字段，具有相同的权重</span><br><span class="line">  - 通过 嵌套bool查询，可以改变 对算分的影响</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 单字符串多字段查询</span><br><span class="line"></span><br><span class="line">- should 算分过程</span><br><span class="line">  - 查询 should 语句中的两个查询</span><br><span class="line">  - 加和 两个查询的评分</span><br><span class="line">  - 乘以 匹配语句的总数</span><br><span class="line">  - 除以 所有语句的总数</span><br><span class="line"></span><br><span class="line">### Dis Max Query</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>两字段竞争，不应 将分数简单叠加，应该找到单个最佳匹配的字段的评分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- dis max query</span><br><span class="line">  - 将任何 与 任一查询匹配的文档作为结果返回。 采用字段上最匹配的评分作为 最终评分返回</span><br><span class="line">  - 通过 tie_breaker 参数调整，将其他匹配语句的评分与tie_breaker 相乘，最终结果为 将最佳匹配评分与tie算法相加   （tie_breaker 介于 0-1， 0：使用最佳匹配，1：所有语句同等重要）</span><br><span class="line"></span><br><span class="line">### Multi Match</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>三种场景：<br>    最佳字段（Best Fields）： 当字段之间相互竞争又相互关联。 评分来自 最匹配字段<br>    多数字段（Most Fields）：<br>        处理英文内容时，常见手段：<br>        在主字段（采用户English Analyzer)，抽取词干，加入同义词，以匹配更多的文档<br>        相同的文本，加入子字段(采用Standard Analyzer)， 以提供更加精确的匹配<br>        其他字段作为匹配文档提高相关度的信号。匹配字段越多则越好<br>  混合字段（cross Field）<br>      对某些实体， 例如人名，地址等， 需要在多个字段中确定信息，单个字段只能作为整体的一部分。 希望在任何这些字段中找到尽可能多的词</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>POST my_index/_search<br>{<br>  “query”: {<br>    “multi_match”: {<br>      “type”: “best_fields”,<br>      “query”: “Quick pets”,<br>      “fields”: [“title”,”body”],<br>      “tie_breaker”: 0.2,<br>      “minimum_should_match”: “20%”<br>    }<br>  }<br>}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>跨字段搜索<br>    无法使用 Operator<br>    可以用 copy_to 解决，但是需要额外的存储空间</p>
+<p>cross_fields  类型的 multi_match<br>    支持 Operator<br>    与 copy_to 相比， 优势： 在搜索时为单个字段提升权重</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 多语言 及 中文分词与检索</span><br><span class="line"></span><br><span class="line">### 多语言</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>不同索引使用不同语言<br>同一索引中，不同字段使用不同语言<br>一个文档的一个字段内混合不同的语言</p>
+<p>挑战：<br>    词干提取<br>    不正确的文档频率 - 英文为主的文字，德文算分高（稀有）<br>    需要判断用户搜索时使用的语言，语言识别（ compact language detector） - 根据语言查询不同索引</p>
+<p>技巧：<br>    归一化词元 / 单词词根抽取 / 同义词 / 拼写错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 中文分词</span><br><span class="line"></span><br><span class="line">- 常用中文分词器： hanLP  /  IK  /  pinyin</span><br><span class="line"></span><br><span class="line">- 演变</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>查字典， （有的词就标示，复合词就找最长的。 不认识就分割成单字）</li>
+<li>最小词数的分词理论  （ 一句话分词数量最少的词串， 二义性分割不行）</li>
+<li>统计语言模型  （ 解决二义性问题， 将中文分词错误率降低。 概率问题： 动态规划+利用维特比算法 ）</li>
+<li>基于统计的机器学习算法  （ HMM，CRF，SVM，深度学习等算法， 基本思路是对汉字进行标注训练。。。）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Search Template 和 Index Alias 查询</span><br><span class="line"></span><br><span class="line">### search Template - 解耦程序 &amp; 搜索DSL</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+ES的查询语句 对 相关性算分 /  查询性能 都至关重要</li>
+</ol>
+<p>在开发初期， 可以明确查询参数，但往往还不能最终定义查询的DSL的具体结构<br>    通过 search Template 定义一个 Contract</p>
+<p>各司其职，解耦<br>    开发人员 / 搜索工程师 / 性能工程师</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="创建一个-search-Template"><a href="#创建一个-search-Template" class="headerlink" title="创建一个 search Template"></a>创建一个 search Template</h1><p>POST _scripts/tmdb<br>{<br>  “script”: {<br>    “lang”: “mustache”,<br>    “source”: {<br>      “_source”: [<br>        “title”,”overview”<br>      ],<br>      “size”: 20,<br>      “query”: {<br>        “multi_match”: {<br>          “query”: ““,<br>          “fields”: [“title”,”overview”]<br>        }<br>      }<br>    }<br>  }<br>}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>搜索工程师 维护 search Template<br>开发工程师 使用 Template 查询， 不用感知具体的查询语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">###  Index Alias </span><br><span class="line"></span><br><span class="line">- 别名： 实现零停机运维</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## 综合查询： function score query 优化算分</span><br><span class="line"></span><br><span class="line">- 算分与排序</span><br><span class="line">  - ES默认会以 文档的相关度算法进行排序</span><br><span class="line">  - 可以通过指定 一个或多个字段进行排序</span><br><span class="line">  - 使用相关度算分（score）排序，不能满足某些特定条件</span><br><span class="line">    - 无法针对相关度，对排序实现更多控制</span><br><span class="line"></span><br><span class="line">### Function Score Query</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可以在查询结束后， 对每一个匹配的文档进行 一系列的重新算分， 根据新生成的分数进行排序</p>
+<p>默认计算分值的函数：<br>    Weight： 为每个文档设置一个简单而不被规范化的权重</p>
+<pre><code>Field Value Factor： 使用该数值修改 _score, 例如将 &quot;热度&quot;，&quot;点赞数&quot;作为算分的参考因素。
+    新的算分=老的算分*热度 （问题，热度数值差异很大 0和10000，结果分数差异过大）
+    使用 modifier 平滑曲线（使用各种 公式计算）：如log1p, 则 新的算分 = 老的算分 * log(1+热度)
+    
+Random Score： 为每一个用户使用一个不同的 随机算分结果 
+    （网站广告提高展现率， 让每个用户看到不同的随机排名，但是也希望同一个用户访问时，结果的相对顺序保持一致）
+    
+衰减函数： 以某个字段的值为标准，距离某个值越近，得分越高
+
+Script Score： 自定义脚本完全控制所需逻辑
+</code></pre>
+<pre><code>
+</code></pre>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/03/17/kubernetes%E5%AD%A6%E4%B9%A0/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">kubernetes学习</div>
+      <strong class="article-nav-caption">&gt;</strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="ds-share share" data-thread-key="elasticsearch学习" data-title="elasticsearch学习" data-url="http://wczj.github.io/2022/03/28/elasticsearch%E5%AD%A6%E4%B9%A0/"  data-images="https://bucket-chao.oss-cn-shanghai.aliyuncs.com/test/avatar.jpg" data-content="elasticsearch学习">
+    <div class="ds-share-inline">
+      <ul  class="ds-share-icons-16">
+      	<li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+        <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+        <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+        <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+        <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+      </ul>
+      <div class="ds-share-icons-more">
+      </div>
+    </div>
+ </div>
+ 
+
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+      <div class="footer-left">
+        &copy; 2022 王大炮
+      </div>
+        <div class="footer-right">
+          <a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/smackgg/hexo-theme-smackdown" target="_blank">Smackdown</a>
+        </div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+
+<script src="/js/main.js"></script>
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js"></script>
+
+
+  </div>
+</body>
+</html>
