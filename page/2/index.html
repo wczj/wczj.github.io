@@ -106,7 +106,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/kubernetes/" style="font-size: 10px;">kubernetes</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" style="font-size: 10px;">即时通讯</a> <a href="/tags/%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" style="font-size: 10px;">同步互斥</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" style="font-size: 15px;">极客时间</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" style="font-size: 10px;">网络协议</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
+						<a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/kubernetes/" style="font-size: 10px;">kubernetes</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8/" style="font-size: 10px;">中断异常</a> <a href="/tags/%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/" style="font-size: 10px;">即时通讯</a> <a href="/tags/%E5%90%8C%E6%AD%A5%E4%BA%92%E6%96%A5/" style="font-size: 10px;">同步互斥</a> <a href="/tags/%E5%A4%84%E7%90%86%E5%99%A8%E8%B0%83%E5%BA%A6/" style="font-size: 10px;">处理器调度</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 20px;">操作系统</a> <a href="/tags/%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4/" style="font-size: 15px;">极客时间</a> <a href="/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" style="font-size: 10px;">消息队列</a> <a href="/tags/%E7%AE%80%E4%BB%8B/" style="font-size: 10px;">简介</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" style="font-size: 10px;">网络协议</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a> <a href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" style="font-size: 10px;">进程与线程</a>
 					</div>
 				</section>
 				
@@ -153,6 +153,150 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-os-进程与线程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" class="article-date">
+  	<time datetime="2021-12-02T13:28:54.000Z" itemprop="datePublished">2021-12-02</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/">
+        操作系统-进程与线程
+        
+      </a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>进程基本概念；</li>
+<li>进程状态及状态转换；</li>
+<li>进程控制块的作用和内容；</li>
+<li>进程控制操作；</li>
+<li>进程地址空间与进程映像；</li>
+<li>为什么引入线程？线程的应用场景；</li>
+<li>Web服务器的实现；</li>
+<li>线程概念、线程与进程的区别；</li>
+<li>线程实现的三种方式；</li>
+<li>Pthreads线程库及应用；</li>
+<li>几个重要的概念：原语、可再入程序。</li>
+</ul>
+<h2 id="进程的基本概念"><a href="#进程的基本概念" class="headerlink" title="进程的基本概念"></a>进程的基本概念</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">多道程序设计 : 允许多个程序同时进入内存并运行， 提高系统效率</span><br><span class="line"></span><br><span class="line">并发环境和并发程序 : </span><br><span class="line">   并发环境： 一段时间间隔内， 一个处理器上有 多个程序 处于开始允许但尚未结束的状态   </span><br><span class="line">   并发程序： 在并发环境中的程序 </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>进程的定义</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">具有独立功能的程序 关于 某个数据集合上的一次运行活动， 系统资源分配和调度的独立单位  （又称 任务）</span><br><span class="line">    程序的一次支持过程</span><br><span class="line">    正在运行程序的抽象</span><br><span class="line">    并发，抽象为一个CPU变成多个CPU</span><br><span class="line">    系统资源分配单位，内存，文件。。。独立地址空间</span><br><span class="line">    操作系统将 CPU 调度给需要的 进程</span><br></pre></td></tr></table></figure>
+
+<p>进程控制块 PCB （又称 进程描述符，进程属性）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">操作系统 控制和管理进程的数据结构 （保存了操作系统管理进程需要的信息）</span><br><span class="line">记录进程的各种属性，描述进程的动态变化过程</span><br><span class="line">是操作系统感知进程存在的唯一标志 (一个进程一个PCB)</span><br><span class="line">进程表： 所有进程的PCB集合 (操作系统最多有多少个进程是固定的）</span><br><span class="line"></span><br><span class="line">PCB包含信息</span><br><span class="line">    进程的描述信息</span><br><span class="line">    进程的控制信息</span><br><span class="line">    进程所拥有的资源和使用情况</span><br><span class="line">    CPU现场信息</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">进程描述信息： </span><br><span class="line">    进程标识符（process ID）， 唯一标识，整数</span><br><span class="line">    进程名， 通常是可执行文件名，不唯一</span><br><span class="line">    用户标识符 （创建进程的用户信息）</span><br><span class="line">    进程组关系 （父子进程等）</span><br><span class="line">    </span><br><span class="line">进程控制信息：</span><br><span class="line">    当前状态</span><br><span class="line">    优先级</span><br><span class="line">    代码执行入口地址</span><br><span class="line">    程序的磁盘地址</span><br><span class="line">    运行的统计信息（执行时间, 页面调度）</span><br><span class="line">    进程间同步和通信</span><br><span class="line">    进程的队列指针</span><br><span class="line">    进程的消息队列指针</span><br><span class="line"></span><br><span class="line">所拥有的资源和使用情况： </span><br><span class="line">    虚拟地址空间的状况</span><br><span class="line">    打开文件的列表</span><br><span class="line"></span><br><span class="line">CPU现场信息：  （进程不运行时，操作系统保存的硬件执行状态） </span><br><span class="line">    寄存器值（通用寄存器，程序计数器PC，程序状态字PSW， 栈指针）</span><br><span class="line">    指向该进程页表的指针</span><br></pre></td></tr></table></figure>
+
+<h2 id="进程状态及状态转换"><a href="#进程状态及状态转换" class="headerlink" title="进程状态及状态转换"></a>进程状态及状态转换</h2><h3 id="三种基本状态"><a href="#三种基本状态" class="headerlink" title="三种基本状态"></a>三种基本状态</h3><ul>
+<li>运行态 : 占有CPU, 在CPU上执行</li>
+<li>就绪态 : 具备运行条件，但是没有空闲CPU，暂时不能执行</li>
+<li>等待态 : 因等待某个时间而暂时不能运行(如：等待读盘) - 又称为阻塞态，封锁态，睡眠态</li>
+</ul>
+<p><strong>三状态模型</strong></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%89%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程三状态模型和状态转换"></p>
+<h3 id="其他状态"><a href="#其他状态" class="headerlink" title="其他状态"></a>其他状态</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">创建态： </span><br><span class="line">    已经完成进程创建的必要工作： 分配PID，填写PCB</span><br><span class="line">    但尚未同意执行该进程（如资源不足）</span><br><span class="line"></span><br><span class="line">终止态：</span><br><span class="line">    终止执行后，完成一些数据统计工作，资源回收工作</span><br><span class="line">    </span><br><span class="line">挂起态： </span><br><span class="line">    用于调节负载 （CPU忙不过来）</span><br><span class="line">    进程不占用内存空间， 其进程映像交换到磁盘上     </span><br></pre></td></tr></table></figure>
+
+<p><strong>五状态模型</strong></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%BA%94%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程五状态模型和状态转换"></p>
+<p><strong>七状态模型</strong></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E4%B8%83%E7%8A%B6%E6%80%81%E6%A8%A1%E5%9E%8B.png" alt="进程七状态模型和状态转换"></p>
+<p><strong>linux状态转换示意图</strong></p>
+<p><img src="/2021/12/02/os-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/linux%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="linux状态转换示意图"></p>
+<h3 id="进程队列"><a href="#进程队列" class="headerlink" title="进程队列"></a>进程队列</h3><p>按进程所处状态不同对进程进行管理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">为每一类进程建立一个或多个队列  (如处于等待态， 按等待事件不同分多个队列）</span><br><span class="line">队列元素为 PCB</span><br><span class="line">伴随进程状态的改变，PCB从一个队列进入另一个队列</span><br></pre></td></tr></table></figure>
+
+<h2 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h2><p>完成进程各状态之间的转换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">由特定功能的原语实现：  （原语： 原子操作，执行的程序不可分割，不可中断）</span><br><span class="line">    进程创建原语</span><br><span class="line">    进程撤销</span><br><span class="line">    进程阻塞，唤醒，挂起，激活</span><br><span class="line">    改变优先级</span><br><span class="line">    。。。    </span><br><span class="line">    </span><br><span class="line">进程创建原语： </span><br><span class="line">    给新进程分配 唯一标识PID， 以及 进程控制块PCB</span><br><span class="line">    为进程分配 地址空间</span><br><span class="line">    初始化进程控制块 (设置默认值)    </span><br><span class="line">    设置相应的队列指针 （插入进程队列，如就绪队列）</span><br><span class="line">    </span><br><span class="line">进程撤销原语： (结束进程）     </span><br><span class="line">    收回进程所占有的资源 （关闭打开的文件，端口网络连接，回收分配的内存。。。）</span><br><span class="line">    撤销该进程的PCB</span><br><span class="line">进程阻塞： </span><br><span class="line">    处于运行状态的进程，运行过程中期待某一事件发生而未发生时，进程自己执行阻塞原语，有运行态进入阻塞态                </span><br></pre></td></tr></table></figure>
+
+<p>Unix常用进程控制操作 （都是系统调用）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fork():  通过 复制调用进程 来创建新的进程， 进程建立进程</span><br><span class="line">exec(): 包括一系列系统调用，通过用新的程序代码覆盖原来的地址空间，实现进程执行代码的转换</span><br><span class="line">wait(): 初级进程同步操作， 一个进程等待另一个进程结束</span><br><span class="line">exit(): 终止一个进程的运行 </span><br></pre></td></tr></table></figure>
+
+<h2 id="一些进程的概念"><a href="#一些进程的概念" class="headerlink" title="一些进程的概念"></a>一些进程的概念</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">进程不同角度的分类： </span><br><span class="line">    系统进程 和 用户进程</span><br><span class="line">    前台进程 和 后台进程</span><br><span class="line">    CPU密集型进程 和 I/O密集型进程</span><br><span class="line"></span><br><span class="line">进程的层次结构： </span><br><span class="line">    UNIX： init为根</span><br><span class="line">    Windows： 地位相等    </span><br></pre></td></tr></table></figure>
+
+<h3 id="进程地址空间"><a href="#进程地址空间" class="headerlink" title="进程地址空间"></a>进程地址空间</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">操作系统为 每个进程 分配 独立的相对进程地址空间</span><br></pre></td></tr></table></figure>
+
+<h3 id="进程映像"><a href="#进程映像" class="headerlink" title="进程映像"></a>进程映像</h3><p>对进程执行活动全过程的静态描述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">由 进程地址空间内容，硬件寄存器内容， 该进程相关的内核数据结构，内核栈 组成</span><br><span class="line"></span><br><span class="line">用户相关： 进程地址空间（ 代码段，数据段，堆栈，共享库）</span><br><span class="line"></span><br><span class="line">寄存器相关： 程序计数器，指令寄存器，程序状态寄存器，栈指针，通用寄存器 等的值  </span><br><span class="line"></span><br><span class="line">内核相关： </span><br><span class="line">    静态： PCB 及 各种资源数据结构</span><br><span class="line">    动态： 内核栈 （不同进程在进入内核后使用不同的内核栈）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="上下文-（context）"><a href="#上下文-（context）" class="headerlink" title="上下文 （context）"></a>上下文 （context）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">将CPU硬件状态从一个进程换到另外一个进程的 过程称为 上下文切换</span><br><span class="line"></span><br><span class="line">进程运行时： 硬件状态保存在CPU的寄存器中</span><br><span class="line">进程不运行时： 这些寄存器的值保存在 进程控制块PCB中</span><br><span class="line"></span><br><span class="line">操作系统运行新的进程时： 将PCB相关的值送到对应的寄存器中</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>为什么在进程中引入线程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">应用的需要  -  一个应用一个进程，但同时需要多个任务完成</span><br><span class="line">开销的考虑  -  线程开销小，线程切换花费时间少， 线程之间共享内存和文件 </span><br><span class="line">性能的考虑</span><br></pre></td></tr></table></figure>
+
+<p>线程的基本概念</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">进程： 资源的拥有者</span><br><span class="line"></span><br><span class="line">线程： CPU调度单位 (有了线程后继承了进程的基本属性）</span><br><span class="line">    在同一进程中增加了多个执行序列（线程）</span><br></pre></td></tr></table></figure>
+
+<h3 id="线程的属性"><a href="#线程的属性" class="headerlink" title="线程的属性"></a>线程的属性</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">标识符ID</span><br><span class="line">状态及状态转换</span><br><span class="line">不运行时需要保存的上下文(寄存器值）</span><br><span class="line">有自己的栈和栈指针</span><br><span class="line">共享进程的地址空间和相关资源</span><br><span class="line">可以创建, 撤销 另外一个线程</span><br><span class="line"></span><br><span class="line">程序开始以 一个单线程进程 运行</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程机制的实现"><a href="#线程机制的实现" class="headerlink" title="线程机制的实现"></a>线程机制的实现</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">用户级线程</span><br><span class="line">核心级线程</span><br><span class="line">混合 - 以上两种方法结合 </span><br></pre></td></tr></table></figure>
+
+<h3 id="用户级线程"><a href="#用户级线程" class="headerlink" title="用户级线程"></a>用户级线程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">实现： </span><br><span class="line">    在用户空间 建立 线程库 ： 提供一组管理线程的过程</span><br><span class="line">    是运行时系统： 完成线程的管理工作（操作，线程表）</span><br><span class="line">    内核管理的还是进程，不知道线程的存在</span><br><span class="line">    线程切换不需要 内核态特权</span><br><span class="line">  </span><br><span class="line">UNIX - 一般就是用户级线程</span><br><span class="line">  </span><br><span class="line">例子: </span><br><span class="line">    POSIX线程库 -- PTHREAD       </span><br><span class="line">    POSIX：多线程编程接口， 以线程库方式提供给用户     </span><br><span class="line">    </span><br><span class="line">优点： </span><br><span class="line">    线程切换快</span><br><span class="line">    调度算法是应用程序特定的</span><br><span class="line">    用户级线程可运行在任何操作系统上 （只需要实现线程库）</span><br><span class="line">缺点： </span><br><span class="line">    内核只将处理器分配给进程， 同一进程的两个线程不能同时运行在两个处理器上</span><br><span class="line">    大多数系统调用是阻塞的，因此，由于内核阻塞进程，进程中所有线程也被阻塞    </span><br><span class="line">     </span><br></pre></td></tr></table></figure>
+
+<h3 id="核心级线程"><a href="#核心级线程" class="headerlink" title="核心级线程"></a>核心级线程</h3><p>彻底改造操作系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">内核进行所有线程的管理， 向应用程序提供API接口</span><br><span class="line">内核维护进程和线程的上下文</span><br><span class="line">线程的切换需要内核支持</span><br><span class="line">以线程为基础进行调度</span><br><span class="line"></span><br><span class="line">例子： Windows</span><br></pre></td></tr></table></figure>
+
+<h3 id="混合模型"><a href="#混合模型" class="headerlink" title="混合模型"></a>混合模型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">线程的创建在 用户空间  （用线程库完成）</span><br><span class="line">线程调度等在 核心态完成</span><br><span class="line"></span><br><span class="line">实现： 多个用户级线程  多路复用 多个内核级线程</span><br><span class="line"></span><br><span class="line">例子： Solaris 操作系统</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">并发性： 任何进程可以与其他进程 一起向前推荐</span><br><span class="line">动态性： 动态产生，动态消亡。 在生命周期内在三种基本状态之间转换</span><br><span class="line">独立性： 资源分配 的独立单位 </span><br><span class="line">交互性： 进程在执行过程中 与 其他进程产生直接或间接的关系</span><br><span class="line">异步性： 每个进程以其 相对独立，不可预知的速度 向前推进</span><br><span class="line">进程映像： 程序 + 数据 + 栈（用户栈，内核栈）+ PCB</span><br></pre></td></tr></table></figure>
+
+<p>线程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">多线程的应用场景</span><br><span class="line">线程基本概念，属性</span><br><span class="line">线程的实现机制</span><br></pre></td></tr></table></figure>
+
+<p>可再入程序 (可重入程序) 的概念</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">指的是可以被多个 进程同时调用的程序，因此对这个程序有限制。 </span><br><span class="line">具有固定性质： </span><br><span class="line">    它是纯代码的， 在执行过程中这个代码不会改变。</span><br><span class="line">    那么如果有改变，就需要调用它的进程提供不同的数据区。改变的内容放在数据区，而代码部分是不再改变的。</span><br><span class="line">    那么可再入程序实际上是我们大部分 进程和线程都必须是可再入程序才能去运行</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/" rel="tag">进程与线程</a></li></ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+	</div>
+
+
+      
+      <div class="clearfix"></div>
+    </div>
+      
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-os-中断异常机制" class="article article-type-post" itemscope itemprop="blogPost">
   
